@@ -227,14 +227,31 @@ plot(ctg2)
         * 観察時間の対数をオフセット項にする、など
       * 比や密度などにも応用可能
         * どっちもばらつきをもっててもOKだけど、それはこの本には出てこない
-        
-## 6.7 正規分布とその尤度
-      
-    
+
 ```{r}
 dat2<-read.csv('kubobook_2012-2/binomial/data4b.csv')
 plot(dat2$A,dat2$y)
 glm(y~x, offset=log(A), family=poisson, data=dat2)
 ```
     
+        
+## 6.7 正規分布とその尤度
+
+  * 正規分布：連続量をの分布＝ガウス分布
+    * $\mu$: 平均値
+    * $\sigma$: ばらつき
+  * $p(y|\mu,\sigma)=\frac{1}{\sqrt(2\pi\sigma~2)}exp\{-\frac{(y-\mu)~2}{2\sigma~2}\}$
+    * 確率密度関数
     
+```{r}
+y<-seq(-5,5,0.1)
+plot(y, dnorm(y, mean=0, sd=1), type='l')
+```
+
+  * 確率密度の積分値が確率
+  * 確率密度関数: $p(y|\mu,\sigma)$ として $p(1.2\leqq y\leqq1.8|\mu,\sigma)$ は $\int^{1.8}_{1.2}p(y|\mu,\sigma)dy$
+  
+```{r}
+pnorm(1.8, 0, 1)-pnorm(1.2,0,1)
+```
+  

@@ -298,20 +298,20 @@ plot(y,d3, type=&#39;b&#39;, col=3, ylim=c(0,0.5))
 # ggplot2でグラフ
 # データの加工にtidyverseをつかってる
 library(tidyverse)</code></pre>
-<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## ── Attaching packages ─────────────── tidyverse 1.3.2 ──
+<pre><code>## Warning: パッケージ &#39;tidyverse&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
 ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
 ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
 ## ✔ readr   2.1.3      ✔ forcats 0.5.2</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## ── Conflicts ────────────────── tidyverse_conflicts() ──
+<pre><code>## Warning: パッケージ &#39;ggplot2&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## Warning: パッケージ &#39;tidyr&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## Warning: パッケージ &#39;readr&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## Warning: パッケージ &#39;purrr&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## Warning: パッケージ &#39;dplyr&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## Warning: パッケージ &#39;stringr&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## Warning: パッケージ &#39;forcats&#39; はバージョン 4.2.2 の R の下で造られました</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p><img src="midori6_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
@@ -488,8 +488,8 @@ class="math inline">\(f_i\)</span>を含むモデルが最も良く予測する�
 </ul>
 <pre class="r"><code>library(MASS)</code></pre>
 <pre><code>## 
-## Attaching package: &#39;MASS&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+##  次のパッケージを付け加えます: &#39;MASS&#39;</code></pre>
+<pre><code>##  以下のオブジェクトは &#39;package:dplyr&#39; からマスクされています:
 ## 
 ##     select</code></pre>
 <pre class="r"><code>stepAIC(res)</code></pre>
@@ -640,10 +640,6 @@ class="math inline">\(logA_i\)</span>が入っている＝オフセット項
 </ul></li>
 </ul></li>
 </ul>
-</div>
-</div>
-<div id="正規分布とその尤度" class="section level2">
-<h2>6.7 正規分布とその尤度</h2>
 <pre class="r"><code>dat2&lt;-read.csv(&#39;kubobook_2012-2/binomial/data4b.csv&#39;)
 plot(dat2$A,dat2$y)</code></pre>
 <p><img src="midori6_files/figure-html/unnamed-chunk-8-1.png" width="768" /></p>
@@ -658,6 +654,34 @@ plot(dat2$A,dat2$y)</code></pre>
 ## Degrees of Freedom: 99 Total (i.e. Null);  98 Residual
 ## Null Deviance:       261.5 
 ## Residual Deviance: 81.61     AIC: 650.3</code></pre>
+</div>
+</div>
+<div id="正規分布とその尤度" class="section level2">
+<h2>6.7 正規分布とその尤度</h2>
+<ul>
+<li>正規分布：連続量をの分布＝ガウス分布
+<ul>
+<li><span class="math inline">\(\mu\)</span>: 平均値</li>
+<li><span class="math inline">\(\sigma\)</span>: ばらつき</li>
+</ul></li>
+<li><span
+class="math inline">\(p(y|\mu,\sigma)=\frac{1}{\sqrt(2\pi\sigma~2)}exp\{-\frac{(y-\mu)~2}{2\sigma~2}\}\)</span>
+<ul>
+<li>確率密度関数</li>
+</ul></li>
+</ul>
+<pre class="r"><code>y&lt;-seq(-5,5,0.1)
+plot(y, dnorm(y, mean=0, sd=1), type=&#39;l&#39;)</code></pre>
+<p><img src="midori6_files/figure-html/unnamed-chunk-9-1.png" width="768" /></p>
+<ul>
+<li>確率密度の積分値が確率</li>
+<li>確率密度関数: <span class="math inline">\(p(y|\mu,\sigma)\)</span>
+として <span class="math inline">\(p(1.2\leqq
+y\leqq1.8|\mu,\sigma)\)</span> は <span
+class="math inline">\(\int^{1.8}_{1.2}p(y|\mu,\sigma)dy\)</span></li>
+</ul>
+<pre class="r"><code>pnorm(1.8, 0, 1)-pnorm(1.2,0,1)</code></pre>
+<pre><code>## [1] 0.07913935</code></pre>
 </div>
 </div>
 </div>
