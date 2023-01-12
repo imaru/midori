@@ -124,6 +124,11 @@
             <li><a href="#例題glmでは説明できないカウントデータ"
             id="toc-例題glmでは説明できないカウントデータ">7.1
             例題：GLMでは説明できないカウントデータ</a></li>
+            <li><a href="#過分散と個体差" id="toc-過分散と個体差">7.2
+            過分散と個体差</a></li>
+            <li><a href="#一般化線形混合モデル"
+            id="toc-一般化線形混合モデル">7.3
+            一般化線形混合モデル</a></li>
             </ul></li>
             </ul>
           </div>
@@ -246,8 +251,28 @@ class="math inline">\(x_i\)</span>の範囲が2–6で100個体集める</li>
 <ul>
 <li>114ページの表で二項分布のリンク関数を確認する→ロジット関数</li>
 <li><span class="math inline">\(logit(q_i)=\beta_1+\beta_2x_i\)</span>
-ロジット関数のパラメータ<span
-class="math inline">\(q_i\)</span>(2値のうち1方となる確率)は</li>
+<ul>
+<li>本にある <span class="math inline">\(p(y_i|\beta_1, \beta_2)= { 8
+\choose y_i }q^{y_i}_i(1-q_i)^{8-y_i}\)</span>
+は二項分布の確率分布関数→118ページ</li>
+<li>GLMがやるのは最尤推定（→25ページあたり）
+<ul>
+<li>尤度(=全ての<span
+class="math inline">\(i\)</span>についての確率の積）を最大にするパラメータの推定</li>
+<li>なので、全ての<span class="math inline">\(i\)</span>について<span
+class="math inline">\(p(y_i|\beta_1,
+\beta_2)\)</span>をかけるんだけど、それは扱いにくいので<span
+class="math inline">\(log\)</span>に入れて計算する（→<span
+class="math inline">\(\Sigma\)</span>log<span
+class="math inline">\(p(y_i|\beta_1, \beta_2)\)</span>; <span
+class="math inline">\(log\)</span>に入れたことで掛け算が足し算になってる）</li>
+</ul></li>
+<li>まあ、実際の計算はRのglm()に任せる</li>
+</ul></li>
+</ul></li>
+<li>ロジット関数のパラメータ<span
+class="math inline">\(q_i\)</span>(2値のうち1方となる確率)は?
+<ul>
 <li>やってみる</li>
 </ul></li>
 </ul>
@@ -263,6 +288,211 @@ glm(cbind(y, N-y) ~ x, data=dat, family=binomial)</code></pre>
 ## Degrees of Freedom: 99 Total (i.e. Null);  98 Residual
 ## Null Deviance:       607.4 
 ## Residual Deviance: 513.8     AIC: 649.6</code></pre>
+<ul>
+<li>切片<span class="math inline">\(\hat{\beta_1}=-2.15\)</span>, <span
+class="math inline">\(x_i\)</span>の傾き<span
+class="math inline">\(\hat{\beta_2}=0.51\)</span>
+(ハットは推定値であることを示すために使っている記号→27ページ脚注)</li>
+<li>図の説明
+<ul>
+<li>図7.2: 葉数<span
+class="math inline">\(x_i\)</span>の関数としての生存種子数<span
+class="math inline">\(y_i\)</span>。データ点数が生存数。</li>
+<li>図7.3</li>
+<li>左:
+図7.2に最尤推定結果（実線）と真のパラメータからの推定結果（破線）のプロット。合ってないことが分かる。</li>
+<li>右:
+合ってないことの再確認。最尤推定されたモデルからの種子数予測（黒丸）と実データ（白丸）。合わない。</li>
+</ul></li>
+</ul>
+</div>
+<div id="過分散と個体差" class="section level2">
+<h2>7.2 過分散と個体差</h2>
+<ul>
+<li>7.1は二項分布で説明できそうな状況なのに合わない。どうやら推定値が誤っている誤っている。</li>
+<li>二項分布で期待(されるとりも大きな分散が含まれているデータ＝過分散(overdispersion)</li>
+</ul>
+<div id="過分散ばらつきが大きすぎる" class="section level3">
+<h3>7.2.1 過分散：ばらつきが大きすぎる</h3>
+<ul>
+<li>図7.3右の<span
+class="math inline">\(x_i=4\)</span>における予測値とデータのずれについてRで調べてみる
+<ul>
+<li>図示して、平均と分散を求める</li>
+</ul></li>
+</ul>
+<pre class="r"><code>d&lt;-read.csv(&#39;./kubobook_2012-2/glmm/data.csv&#39;)
+d4&lt;-d[d$x==4,]
+plot(table(d4$y),type=&#39;b&#39;)</code></pre>
+<p><img src="midori7_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+<pre class="r"><code>c(mean(d4$y), var(d4$y))</code></pre>
+<pre><code>## [1] 4.050000 8.365789</code></pre>
+<ul>
+<li>二項分布において<span
+class="math inline">\(y_i\)</span>の期待値は<span
+class="math inline">\(np\)</span>, 分散は<span
+class="math inline">\(np(1-p)\)</span>
+<ul>
+<li>今の例で<span
+class="math inline">\(x_i=4\)</span>のとき、生存確率<span
+class="math inline">\(p\)</span>は<span
+class="math inline">\(4.05/8\)</span>で0.5くらい</li>
+<li>分散は<span class="math inline">\(8 \times 0.5 \times
+(1-0.5)\)</span>で2くらいとなるはず。二項分布ならば。</li>
+<li>実際に計算した分散は0.84なので明らかに分散が大きい</li>
+<li>二項分布だと説明できないじゃん</li>
+</ul></li>
+</ul>
+</div>
+<div id="観測されていない個体差がもたらす過分散" class="section level3">
+<h3>7.2.2 観測されていない個体差がもたらす過分散</h3>
+<ul>
+<li>過分散になってしまう原因は1つには限らない
+<ul>
+<li>けど、よくあるのが観測されていない個体差（個人差）
+<ul>
+<li>図7.4: 極端な例。全生存と全非生存が半数ずつで平均4、分散（<span
+class="math inline">\(\frac{n\Sigma(x_i-\bar{x})}{n}\)</span>）16。二項分布で期待される分散2よりかなり大きい。</li>
+</ul></li>
+<li>「全個体は均質」という仮定で二項分布に従うなどと考えると失敗するよ、という話</li>
+</ul></li>
+</ul>
+</div>
+<div id="観測されていない個体差とは何か" class="section level3">
+<h3>7.2.3 観測されていない個体差とは何か?</h3>
+<ul>
+<li>個体差：データとしては定量化も識別もされていないけれど、各個体の何かに起因しているように見える差</li>
+<li>今回の例でいうなら可能性あることは2種類
+<ul>
+<li>生物的要因（遺伝子、経験）</li>
+<li>非生物的要因（栄養塩類量、水分や光などの環境）</li>
+<li>ほかにもあり得る。1鉢につき1植物だとすると、鉢の置き場所、土の状態などなど。ここではこれらの非生物要因を場所差・ブロック差と呼ぶ。</li>
+<li>鉢の効果をデータから推定できる?
+<ul>
+<li>1鉢に1植物の場合、鉢と植物個体は交絡してるので区別はできない。まとめたものが個体差。</li>
+<li>いずれにしろ、影響する要因全てを特定するのは不可能。個体差や場所差があるという前提で統計モデルを考える必要。</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="一般化線形混合モデル" class="section level2">
+<h2>7.3 一般化線形混合モデル</h2>
+<ul>
+<li>一般化線形混合モデル（generalized linear mixed model）
+<ul>
+<li>個体差や場所の効果をGLMに組み込むためのモデル</li>
+</ul></li>
+</ul>
+<div id="個体差をあらわずパラメータの追加" class="section level3">
+<h3>7.3.1 個体差をあらわずパラメータの追加</h3>
+<ul>
+<li>ある個体<span class="math inline">\(i\)</span>の生存確率<span
+class="math inline">\(q_i\)</span>の式に個体差をあらわすパラメータ<span
+class="math inline">\(r_i\)</span>を追加
+<ul>
+<li><span
+class="math inline">\(logit(q_i)=\beta_i+\beta_2x_1+r_i\)</span>
+<ul>
+<li><span class="math inline">\(r_i\)</span>は<span
+class="math inline">\(-\infty\)</span>から<span
+class="math inline">\(\infty\)</span>をとる連続値</li>
+<li>図7.5: <span
+class="math inline">\(r_i\)</span>の影響。正の値だと生存確率は大きく、負の値だと小さくなる</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="個体差のばらつきを表す確率分布" class="section level3">
+<h3>7.3.2 個体差のばらつきを表す確率分布</h3>
+<ul>
+<li>GLMMでは<span
+class="math inline">\(r_i\)</span>は何か確率分布に従っていると考える
+<ul>
+<li>しかもデータに基づいて、そのパラメータを推定できる</li>
+</ul></li>
+<li>他のパラメータ（<span class="math inline">\(\beta_1,
+\beta_2\)</span>）については確率分布に従うことを考えてるわけではない</li>
+<li>ここでは<span
+class="math inline">\(r_i\)</span>は平均0、標準偏差<span
+class="math inline">\(s\)</span>の正規分布に従うと仮定（ただし、正規分布とする根拠はない。観測してないから分からない。便利だから正規分布にするだけ）</li>
+<li>さらに各<span
+class="math inline">\(r_i\)</span>は独立と考える。これも単純化のため、なので便利になるように。</li>
+<li>これらの前提でいくと、<span
+class="math inline">\(r_i\)</span>の確率分布は以下のようにあらわせる
+<ul>
+<li><span class="math inline">\(p(r_i|s)=\frac{1}{\sqrt(2\pi
+s^2)}exp(-\frac{r_i^2}{2s^2})\)</span>
+<ul>
+<li>正規分布の確率分布関数そのまま。平均0と仮定しているので平均の項が消えてる（→135ページ）</li>
+<li>標準偏差<span class="math inline">\(s\)</span>は<span
+class="math inline">\(r_i\)</span>のばらつきに影響するので、<span
+class="math inline">\(s\)</span>によって集団の質が変わり、過分散の程度が変わることになる</li>
+</ul></li>
+</ul></li>
+<li>ここで図7.6の説明
+<ul>
+<li>一番上の図：標準偏差<span
+class="math inline">\(s\)</span>によって分布の広がりが変わる。これはOK。</li>
+<li>(A): <span class="math inline">\(s\)</span>が小さいと<span
+class="math inline">\(r_i\)</span>の分布は狭く、(B)<span
+class="math inline">\(s_i\)</span>が大きいと<span
+class="math inline">\(r_i\)</span>は広い。これもOK。</li>
+<li>このような<span
+class="math inline">\(r_i\)</span>（ここでは50個体分）から二項乱数を発生させる
+<ul>
+<li>ここを忘れていそう。→120ページあたり。</li>
+<li>二項分布のリンク関数はロジット関数（log<span
+class="math inline">\(\frac{q_i}{1-q_i}\)</span>）</li>
+<li>この確率<span
+class="math inline">\(q_i\)</span>はロジスティック関数（<span
+class="math inline">\(q_i=\frac{1}{1+exp(-線形予測子)}\)</span>）で求めることができる</li>
+<li>この図では、線形予測子の中のパラメータ<span
+class="math inline">\(\beta_1,
+\beta_2\)</span>を0とおいてるので、線形予測子は<span
+class="math inline">\(r_i\)</span>のみとなり、(A)や(B)のように標準偏差が異なる正規分布から生成した<span
+class="math inline">\(r_i\)</span>を使うことになる。</li>
+</ul></li>
+<li><span class="math inline">\(q_i\)</span>が決まると個体数<span
+class="math inline">\(y_i\)</span>も決まるので算出し、プロットしたのが一番下の図
+<ul>
+<li><span
+class="math inline">\(s\)</span>が小さいと二項分布に近くなるけど、大きいと全然違う分布になる</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="線形予測子の構成要素固定効果とランダム効果"
+class="section level3">
+<h3>7.3.3 線形予測子の構成要素：固定効果とランダム効果</h3>
+<ul>
+<li>GLMMの混合（mixed）とは何か
+<ul>
+<li>線形予測子はいくつかの項（説明変数）から構成される</li>
+<li>それらの構成要素は固定効果（fixed effects）ランダム効果（random
+effects）に分類</li>
+<li>2種類の項を持つので、そのようなGLMは混合モデル、混合効果モデルと呼ばれてきた</li>
+<li>リンク関数のないモデル（ばらつきは正規分布）の場合
+<ul>
+<li>固定効果：全体の平均を変える</li>
+<li>ランダム効果：全体の平均には影響しないけど、ばらつきを変える</li>
+</ul></li>
+<li>今回のモデル<span
+class="math inline">\(logit(q_i)=\beta_1+\beta_2x_1+r_i\)</span>では<span
+class="math inline">\(\beta_1\)</span>、<span
+class="math inline">\(\beta_2x1\)</span>は固定効果、<span
+class="math inline">\(r_i\)</span>はランダム効果
+<ul>
+<li><span
+class="math inline">\(r_i\)</span>は平均0としているから全体の平均には影響しない
+<ul>
+<li>平均0じゃなかったら?</li>
+<li>それは切片に入る?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 </div>
 </div>
 </div>
