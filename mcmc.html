@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+        <meta name="author" content="Toshihide Imaruoka" />
+    
+    
+    <title>#1-7MCMCの基本</title>
+
+        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="mycss.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#章-mcmcの基本" id="toc-章-mcmcの基本">1-7章:
+            MCMCの基本</a>
+            <ul>
+            <li><a href="#概要" id="toc-概要">1. 概要</a></li>
+            <li><a href="#mcmcとは何か" id="toc-mcmcとは何か">2.
+            MCMCとは何か</a></li>
+            <li><a href="#確率分布に従う乱数の例"
+            id="toc-確率分布に従う乱数の例">★確率分布に従う乱数の例</a></li>
+            <li><a href="#mcmcと統計モデリングの関わり"
+            id="toc-mcmcと統計モデリングの関わり">3.
+            MCMCと統計モデリングの関わり</a></li>
+            <li><a href="#モンテカルロ法" id="toc-モンテカルロ法">4.
+            モンテカルロ法</a></li>
+            <li><a href="#モンテカルロ積分" id="toc-モンテカルロ積分">5.
+            モンテカルロ積分</a></li>
+            <li><a href="#マルコフ連鎖" id="toc-マルコフ連鎖">6.
+            マルコフ連鎖</a></li>
+            <li><a href="#定常分布" id="toc-定常分布">7.
+            定常分布</a></li>
+            <li><a href="#スマホユーザーの例"
+            id="toc-スマホユーザーの例">★スマホユーザーの例</a></li>
+            <li><a href="#mcmcが目指すこと" id="toc-mcmcが目指すこと">8.
+            MCMCが目指すこと</a></li>
+            <li><a href="#メトロポリスヘイスティングス法mh法"
+            id="toc-メトロポリスヘイスティングス法mh法">9.
+            メトロポリス・ヘイスティングス法（MH法）</a></li>
+            <li><a href="#mh法の計算例" id="toc-mh法の計算例">10.
+            MH法の計算例</a></li>
+            <li><a href="#メトロポリスヘイスティングス法の実装例"
+            id="toc-メトロポリスヘイスティングス法の実装例">★メトロポリス・ヘイスティングス法の実装例</a></li>
+            <li><a href="#mh法の欠点" id="toc-mh法の欠点">11.
+            MH法の欠点</a></li>
+            <li><a href="#ハミルトニアンモンテカルロ法hmc法"
+            id="toc-ハミルトニアンモンテカルロ法hmc法">12.
+            ハミルトニアン・モンテカルロ法（HMC法）</a></li>
+            <li><a href="#乱数の取り扱いの注意点"
+            id="toc-乱数の取り扱いの注意点">13.
+            乱数の取り扱いの注意点</a></li>
+            <li><a href="#繰り返し数iterの設定"
+            id="toc-繰り返し数iterの設定">14.
+            繰り返し数(iter)の設定</a></li>
+            <li><a href="#バーンイン期間warmupの設定"
+            id="toc-バーンイン期間warmupの設定">15.
+            バーンイン期間(warmup)の設定</a></li>
+            <li><a href="#間引きthinの設定"
+            id="toc-間引きthinの設定">16. 間引き(thin)の設定</a></li>
+            <li><a href="#チェーンchainsの設定"
+            id="toc-チェーンchainsの設定">17.
+            チェーン(chains)の設定</a></li>
+            <li><a href="#収束の判定" id="toc-収束の判定">18.
+            収束の判定</a></li>
+            <li><a href="#点推定と区間推定"
+            id="toc-点推定と区間推定">19. 点推定と区間推定</a></li>
+            <li><a href="#ベイズ信用区間" id="toc-ベイズ信用区間">20.
+            ベイズ信用区間</a></li>
+            <li><a href="#事後中央値med-posteriori-median"
+            id="toc-事後中央値med-posteriori-median">21. 事後中央値(MED;
+            posteriori median)</a></li>
+            <li><a href="#事後期待値eap-expected-a-posteriori"
+            id="toc-事後期待値eap-expected-a-posteriori">22.
+            事後期待値(EAP; expected a posteriori)</a></li>
+            <li><a href="#事後確率最大値map-maximum-a-posteriori"
+            id="toc-事後確率最大値map-maximum-a-posteriori">23.
+            事後確率最大値(MAP; maximum a posteriori)</a></li>
+            </ul></li>
+            <li><a href="#の補足-緑本のmcmc"
+            id="toc-の補足-緑本のmcmc">1-7の補足: 緑本のMCMC</a>
+            <ul>
+            <li><a href="#緑本の-種子の例のヒストグラムと対数尤度関数"
+            id="toc-緑本の-種子の例のヒストグラムと対数尤度関数">★緑本の
+            「種子の例」のヒストグラムと対数尤度関数</a></li>
+            <li><a href="#ふらふら最尤推定"
+            id="toc-ふらふら最尤推定">★ふらふら最尤推定</a></li>
+            <li><a href="#メトロポリス法の実装例"
+            id="toc-メトロポリス法の実装例">★メトロポリス法の実装例</a></li>
+            </ul></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">my public memo</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li>
+        <a href="index.html">Home</a>
+      </li>
+      <li>
+        <a href="midori1.html">緑本1部</a>
+      </li>
+      <li>
+        <a href="midori2.html">緑本2部</a>
+      </li>
+      <li>
+        <a href="midori3.html">緑本3部</a>
+      </li>
+      <li>
+        <a href="midori4.html">緑本4部</a>
+      </li>
+      <li>
+        <a href="midori5.html">緑本5部</a>
+      </li>
+      <li>
+        <a href="midori6.html">緑本6部 </a>
+      </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">#1-7MCMCの基本</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Toshihide
+Imaruoka
+      </p>
+              
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="章-mcmcの基本" class="section level1">
+<h1>1-7章: MCMCの基本</h1>
+<div id="概要" class="section level2">
+<h2>1. 概要</h2>
+<ul>
+<li>MCMCと統計モデリング</li>
+<li>MCMCの乱数生成の基本</li>
+<li>MCMCの利用方法</li>
+</ul>
+</div>
+<div id="mcmcとは何か" class="section level2">
+<h2>2. MCMCとは何か</h2>
+<ul>
+<li>マルコフ連鎖モンテカルロ法（Markov Chain Monte Carlo）</li>
+<li>乱数生成の手法としてマルコフ連鎖を使う</li>
+<li>離散時間マルコフ連鎖: ある時点の値は1時点前の値<span
+class="math inline">\(\textbf{のみ}\)</span>に依存</li>
+<li>モンテカルロ法：疑似乱数を使って何らかの性質を求める方法</li>
+<li>確率的に変化するランダムな値の例↓ 平均m
+分散vの正規分布（左）に従ってn個生成された乱数のヒストグラム（右）</li>
+</ul>
+</div>
+<div id="確率分布に従う乱数の例" class="section level2">
+<h2>★確率分布に従う乱数の例</h2>
+<pre class="r"><code>layout(matrix(1:2, ncol=2))
+m&lt;-0
+v&lt;-1
+n&lt;-10000
+x&lt;-seq(m-sqrt(v)*4,m+sqrt(v)*4,0.01)
+y&lt;-(1/sqrt(2*pi*v))*exp(-(x-m)^2/(2*v))
+plot(x,y,type=&#39;l&#39;)
+rdata&lt;-rnorm(n, m, sqrt(v))
+hist(rdata, breaks=12)</code></pre>
+<p><img src="mcmc_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
+</div>
+<div id="mcmcと統計モデリングの関わり" class="section level2">
+<h2>3. MCMCと統計モデリングの関わり</h2>
+<ul>
+<li>そもそも
+<ul>
+<li>MCMC -&gt; 単に乱数の生成方法の一つ</li>
+<li>ただし、事後分布（6章「データが得られた後に想定する分布」）に従う乱数の生成に使えるところが偉い。</li>
+<li>ベイズの定理に従って作られた（パラメータの）事後分布は複雑な場合が多い（＝パラメータに関して何らかの情報を得るのが難しい。前章のビールの例のようにパラメータ<span
+class="math inline">\(\beta_1\)</span>の<span
+class="math inline">\(2.5%\)</span>点の値はコレ、とか分かればいいけど、普通は分からない）</li>
+<li>なので、その分布に従う乱数を生成。乱数をもとに事後分布を作成。＝分布を評価するのではなく、分布に従って生成した値たちを評価＝対象が式じゃなくて値たちなら、点推定もできるし評価が簡単。
+<ul>
+<li>ここで点推定が出てきて個人的にはちょっと混乱した（パラメータの点推定はしないんじゃないの？）けど、生成した確率分布の代表値を点推定で出すことは普通にあるということっぽいです。</li>
+</ul></li>
+</ul></li>
+<li>ここで発表はちょっと脇道に逸れます。ここからしばらくは頻度主義（求めたいパラメータは真の値を持つ、という考え方の統計）の例ですが、<a
+href="https://www.amazon.co.jp/dp/400006973X">緑本</a>から：<a
+href="#id_%E3%81%AE%E8%A3%9C%E8%B6%B3-%E7%B7%91%E6%9C%AC%E3%81%AEmcmc">MCMCを理解するための補足説明</a></li>
+</ul>
+</div>
+<div id="モンテカルロ法" class="section level2">
+<h2>4. モンテカルロ法</h2>
+<ul>
+<li>乱数を利用した計算法（緑本, P177）</li>
+<li>乱数を生成する手法（馬場本）</li>
+<li>乱数生成する方法はたくさんあるけど、事後分布に従う乱数を発生できるのがMCMCということ</li>
+</ul>
+</div>
+<div id="モンテカルロ積分" class="section level2">
+<h2>5. モンテカルロ積分</h2>
+<ul>
+<li>第6章「事後分布の期待値を出すためには、その確率密度関数を積分しなきゃいけないけど、すごく大変」</li>
+<li>ここではそれをどう回避しているかを説明</li>
+<li>事後分布のパラメータ<span
+class="math inline">\(\theta\)</span>の期待値を知りたいとき、事後分布に従う乱数<span
+class="math inline">\(\hat{\theta}\)</span>が十分な数（例えば1000個）生成されるなら、<span
+class="math inline">\(\theta\)</span>の期待値は<span
+class="math inline">\(\frac{\Sigma^{1000}_{i=1}
+\hat{\theta}}{1000}\)</span>。つまり乱数<span
+class="math inline">\(\hat{\theta}\)</span>の平均値。ということで積分計算が不要になる。</li>
+</ul>
+</div>
+<div id="マルコフ連鎖" class="section level2">
+<h2>6. マルコフ連鎖</h2>
+<ul>
+<li>時点によって変化していく確率変数</li>
+<li>遷移核：1時点前の値を所与としたと条件付き確率</li>
+<li>スマホの例</li>
+<li>ある時点でスマホユーザーがとる選択は
+<ol style="list-style-type: decimal">
+<li>同じ会社のものを使い続ける</li>
+<li>別な会社のものに乗り換える</li>
+</ol></li>
+<li>ある時点<span
+class="math inline">\(t\)</span>で、どの会社のスマホを使ってるかは、それまで使っていたスマホ会社を所与とした条件つき確率</li>
+<li>このとき遷移核
+<ul>
+<li>A社だった人がA社：<span
+class="math inline">\(P(X_t=A社|X_{t-i}=A社)=0.4\)</span></li>
+<li>A社だった人がB社：<span
+class="math inline">\(P(X_t=B社|X_{t-i}=A社)=0.6\)</span></li>
+<li>B社だった人がB社：<span
+class="math inline">\(P(X_t=B社|X_{t-i}=B社)=0.1\)</span></li>
+<li>B社だった人がA社：<span
+class="math inline">\(P(X_t=A社|X_{t-i}=B社)=0.9\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="定常分布" class="section level2">
+<h2>7. 定常分布</h2>
+<ul>
+<li>さっきのスマホの例だと、最終的にA社が多くなって落ち着きそう -&gt;
+A社60%で落ち着くらしい</li>
+<li>やってみよう</li>
+</ul>
+</div>
+<div id="スマホユーザーの例" class="section level2">
+<h2>★スマホユーザーの例</h2>
+<pre class="r"><code># a地域とb地域では初期比が異なるけど、遷移核が同じならそのうち同じ値に収束するという例
+na&lt;-1 # a地域人数
+nb&lt;-1 # b地域人数
+aAi&lt;-0.9 # a地域におけるA社初期比
+aBi&lt;-1-aAi # a地域におけるA社初期比
+bAi&lt;-0.2 # b地域のA社初期比
+bBi&lt;-1-bAi　# b地域のB社初期比
+
+nrp&lt;-30 # 繰り返し数
+rAA&lt;-0.4 # 以下の4行は遷移核
+rAB&lt;-0.6
+rBB&lt;-0.1
+rBA&lt;-0.9
+naA&lt;-numeric(nrp)
+naB&lt;-numeric(nrp)
+nbA&lt;-numeric(nrp)
+nbB&lt;-numeric(nrp)
+naA[1]&lt;-na*aAi
+naB[1]&lt;-na*aBi
+nbA[1]&lt;-nb*bAi
+nbB[1]&lt;-nb*bBi
+for(rp in 2:nrp){
+  naA[rp]&lt;-naA[rp-1]*rAA+naB[rp-1]*rBA
+  naB[rp]&lt;-naA[rp-1]*rAB+naB[rp-1]*rBB
+  nbA[rp]&lt;-nbA[rp-1]*rAA+nbB[rp-1]*rBA
+  nbB[rp]&lt;-nbA[rp-1]*rAB+nbB[rp-1]*rBB
+}
+layout(matrix(1:2, ncol=2))
+plot(naA, type=&#39;l&#39;,col=&#39;red&#39;,ylim=c(0,1.0))
+par(new=T)
+plot(naB, type=&#39;l&#39;,col=&#39;blue&#39;,xlab=&#39;&#39;,ylab=&#39;&#39;,ylim=c(0,1.0))
+plot(nbA, type=&#39;l&#39;,col=&#39;red&#39;,ylim=c(0,1.0))
+par(new=T)
+plot(nbB, type=&#39;l&#39;,col=&#39;blue&#39;,xlab=&#39;&#39;,ylab=&#39;&#39;,ylim=c(0,1.0))</code></pre>
+<p><img src="mcmc_files/figure-html/mobile%20phone-1.png" width="768" /></p>
+</div>
+<div id="mcmcが目指すこと" class="section level2">
+<h2>8. MCMCが目指すこと</h2>
+<ul>
+<li>このようなユーザーからダンラムに選んで調査をすればきっと6:4になるだろう、と推測できる</li>
+<li>遷移核を適切に決めることができれば、「何か」に従う乱数の生成が可能</li>
+<li>遷移核をどう適切に決めるか。</li>
+</ul>
+</div>
+<div id="メトロポリスヘイスティングス法mh法" class="section level2">
+<h2>9. メトロポリス・ヘイスティングス法（MH法）</h2>
+<ul>
+<li>乱数生成アルゴリズムの一つ。</li>
+<li>ここではランダムウォークMH法</li>
+<li>MH法のアルゴリズム
+<ul>
+<li>この例での変数の使い方
+<ul>
+<li>パラメータ<span
+class="math inline">\(\theta\)</span>の分布を生成</li>
+<li>t番目の乱数: <span
+class="math inline">\(\hat{\theta_t}\)</span></li>
+<li>初期値: <span class="math inline">\(\hat{\theta_1}\)</span></li>
+<li>事後分布: <span class="math inline">\(f(\theta|D)\)</span>
+<ul>
+<li>データ<span
+class="math inline">\(D\)</span>が得られたという条件のもとで、<span
+class="math inline">\(\theta\)</span>が取りうる値の確率分布</li>
+</ul></li>
+<li>事前分布: <span class="math inline">\(f(\theta)\)</span>
+<ul>
+<li>情報がない状態での<span
+class="math inline">\(\theta\)</span>の確率分布</li>
+</ul></li>
+<li>尤度関数: <span class="math inline">\(f(D|\theta)\)</span>
+<ul>
+<li><span
+class="math inline">\(\theta\)</span>がある確率分布に従うという条件のもとでデータ<span
+class="math inline">\(D\)</span>が得られることの尤もらしさ</li>
+</ul></li>
+<li>カーネル: <span class="math inline">\(Kernel(\theta)\)</span>
+<ul>
+<li><span class="math inline">\(f(\theta|D)\propto
+f(D|\theta)f(\theta)=Kernel(\theta)\)</span></li>
+<li>事後分布=尤度x事前分布<span
+class="math inline">\(\propto\)</span>カーネル</li>
+</ul></li>
+</ul></li>
+<li>手順
+<ol style="list-style-type: decimal">
+<li>連続一様分布などに従ってランダムに初期値を決める</li>
+<li>平均<span class="math inline">\(0\)</span>, 分散<span
+class="math inline">\(\sigma\)</span>の正規分布に従う乱数を生成, <span
+class="math inline">\(\hat{\theta}_2^{提案}=\hat{\theta}_1+乱数\)</span></li>
+<li><span class="math inline">\(f(\theta_1|D)\)</span>と<span
+class="math inline">\(f(\theta_2^{提案}|D)\)</span>の比を算出(<span
+class="math inline">\(rate\)</span>)。ただし<span
+class="math inline">\(rate=\frac{f(\hat{\theta}_2^{提案}|D)}{f(\hat{\theta}_1|D)}=\frac{Kernel(\hat{\theta}_2^{提案})}{Kernel(\hat{\theta_1})}\)</span></li>
+</ol>
+<ul>
+<li>ここ、本には「事後分布のカーネルがすでに得られているから、カーネルの比を取る的な書き方がされているけど、おそらく話としては、それぞれの<span
+class="math inline">\(\theta\)</span>のときの確率の比を取る（それには事後分布の確率密度関数が使える）というのが筋。確率が高ければ提案を採用するという話なので。そのとき、事後分布のままだと分母の正規化定数が邪魔なんだけど、定数だからそれを消したカーネルの比でOKですよ、ということだと思う。</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li><span
+class="math inline">\(rate\)</span>が1より大きければ提案を採用、1より小さくても<span
+class="math inline">\(rate\)</span>の確率で採用。</li>
+</ol></li>
+<li>緑本のメトロポリス法との違い
+<ul>
+<li>乱数生成が確率1/2から正規分布に従う乱数になった、だけ?</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="mh法の計算例" class="section level2">
+<h2>10. MH法の計算例</h2>
+<ul>
+<li>6-10の5つの売り上げデータの例</li>
+<li>やってみよう!</li>
+</ul>
+</div>
+<div id="メトロポリスヘイスティングス法の実装例" class="section level2">
+<h2>★メトロポリス・ヘイスティングス法の実装例</h2>
+<pre class="r"><code>layout(matrix(1:2, ncol=2))
+nrp&lt;-2000
+data&lt;-c(2.4,3.2,2.2,4.6,3.3)
+m&lt;-0
+v&lt;-1
+chain&lt;-4
+#knl&lt;-numeric(nrp)
+#theta&lt;-numeric(nrp)
+knl&lt;-matrix(0,nrow=nrp, ncol=chain)
+theta&lt;-matrix(0,nrow=nrp,ncol=chain)
+
+ratio&lt;-1
+for (nc in 1:chain){
+  theta[1, nc]&lt;-runif(1,min=-2,max=2) # -2から2の連続一様分布に従う乱数
+  for (rp in 1:nrp){
+    kp&lt;-numeric(length(data))
+    for (d in 1:length(data)){
+      kp[d]&lt;-exp(-((data[d]-theta[rp,nc])^2)/2)/sqrt(2)*pi
+    }
+    knl[rp,nc]&lt;-prod(kp)*exp(-(theta[rp,nc]^2/20000))/sqrt(20000*pi) #カーネルの計算
+    
+    if (rp&gt;1){
+      lr&lt;-knl[rp,nc]/knl[rp-1,nc]  # カーネル比（rate）の算出
+      if (runif(1)&gt;lr){ # 確率rateで提案thetaを採用
+        #print(lr)
+        theta[rp,nc]&lt;-theta[rp-1,nc]
+        knl[rp,nc]&lt;-knl[rp-1,nc]
+      }
+    }
+    if (rp&lt;nrp){
+      theta[rp+1,nc]&lt;-theta[rp,nc]+rnorm(1,m,v) # 次のthetaの生成, 平均m, 分散vの正規分布に従う乱数を前のthetaにたす
+    } 
+  }
+}
+
+for (wf in 1:chain){
+  if (wf&gt;1){
+    par(new=T)
+    plot(theta[1:nrp,wf],type=&#39;l&#39;, xlab=&#39;&#39;,ylab=&#39;&#39;, col=wf, ylim=(c(min(theta),max(theta))))
+  }else{
+    plot(theta[1:nrp,wf],type=&#39;l&#39;, main=mean(theta), col=wf, ylim=(c(min(theta),max(theta))))
+  }
+}
+par(new=F)
+for (wf in 1:chain){
+  if (wf&gt;1){
+    hist(theta[,wf], col=adjustcolor(wf, alpha.f=0.3), add=TRUE, breaks=seq(floor(min(theta)),ceiling(max(theta)),0.5))
+  }else{
+    hist(theta[,wf], col=adjustcolor(wf, alpha.f=0.3), breaks=seq(floor(min(theta)),ceiling(max(theta)),0.5))
+  }
+}</code></pre>
+<p><img src="mcmc_files/figure-html/m-h%20method-1.png" width="768" /></p>
+</div>
+<div id="mh法の欠点" class="section level2">
+<h2>11. MH法の欠点</h2>
+<ul>
+<li>乱数生成のときの分散をどう決めるか
+<ul>
+<li>大きすぎると提案値が大きくなることが増え、いいところに行きにくい</li>
+<li>小さすぎるとなかなか変化しなくていいところに行きにくい＝受容率が低い</li>
+</ul></li>
+</ul>
+</div>
+<div id="ハミルトニアンモンテカルロ法hmc法" class="section level2">
+<h2>12. ハミルトニアン・モンテカルロ法（HMC法）</h2>
+<ul>
+<li>MH法の欠点を改善</li>
+<li>受容率をあげつつ、パラメータの変化を大きく保つ</li>
+<li>提案値をランダムではなく、確率密度の高い領域から選ぶ</li>
+<li>アルゴリズムの質的説明はP.72。stanにはNUTSというHMC法が実装されてるらしい</li>
+</ul>
+</div>
+<div id="乱数の取り扱いの注意点" class="section level2">
+<h2>13. 乱数の取り扱いの注意点</h2>
+<ol style="list-style-type: decimal">
+<li>各種設定：乱数をいくつ生成するかなど</li>
+<li>収束の評価：生成された値をどう評価するか</li>
+<li>乱数の代表値を求める</li>
+</ol>
+</div>
+<div id="繰り返し数iterの設定" class="section level2">
+<h2>14. 繰り返し数(iter)の設定</h2>
+<ul>
+<li>乱数の個数。MH法の例ではiter=2000。メトロポリス法ではiter=100000だった。</li>
+<li>stanでは2000が設定されることが多い</li>
+</ul>
+</div>
+<div id="バーンイン期間warmupの設定" class="section level2">
+<h2>15. バーンイン期間(warmup)の設定</h2>
+<ul>
+<li>初期値に依存するので最初の方はあやしい</li>
+<li>切り捨てて使わない</li>
+</ul>
+</div>
+<div id="間引きthinの設定" class="section level2">
+<h2>16. 間引き(thin)の設定</h2>
+<ul>
+<li>生成した乱数を間引く</li>
+<li>乱数間の自己相関を下げるための工夫</li>
+</ul>
+</div>
+<div id="チェーンchainsの設定" class="section level2">
+<h2>17. チェーン(chains)の設定</h2>
+<ul>
+<li>収束評価のため、乱数生成を何度か繰り返す</li>
+<li>代表値を比較などして評価</li>
+<li>chains=4を使うことが多い</li>
+</ul>
+</div>
+<div id="収束の判定" class="section level2">
+<h2>18. 収束の判定</h2>
+<ul>
+<li>良く使われる判定指標：<span
+class="math inline">\(\hat{R}\)</span></li>
+<li><span
+class="math inline">\(\hat{R}=\frac{同一のチェーン内での乱数の分散の平均値}{異なるチェーンも含めたすべての乱数の分散}\)</span></li>
+<li>これが1.1より小さくなるまで繰り返す</li>
+<li>chans=1の場合、チェーン内をいくつかに分割して計算</li>
+</ul>
+</div>
+<div id="点推定と区間推定" class="section level2">
+<h2>19. 点推定と区間推定</h2>
+<ul>
+<li>点推定：推定値を1点だけ提示-&gt;MED, EAP, MAPは点推定</li>
+<li>区間推定：なんらかの区間を設定して、幅のある推定値を提示</li>
+</ul>
+</div>
+<div id="ベイズ信用区間" class="section level2">
+<h2>20. ベイズ信用区間</h2>
+<ul>
+<li>乱数を小さい値から並べて2.5%点から97.5%点に該当する範囲</li>
+<li>95%ベイズ信用区間 / 95%ベイズ信頼区間</li>
+</ul>
+</div>
+<div id="事後中央値med-posteriori-median" class="section level2">
+<h2>21. 事後中央値(MED; posteriori median)</h2>
+<ul>
+<li>事後分布の中央値を採用</li>
+</ul>
+</div>
+<div id="事後期待値eap-expected-a-posteriori" class="section level2">
+<h2>22. 事後期待値(EAP; expected a posteriori)</h2>
+<ul>
+<li>事後分布の平均値を採用</li>
+</ul>
+</div>
+<div id="事後確率最大値map-maximum-a-posteriori" class="section level2">
+<h2>23. 事後確率最大値(MAP; maximum a posteriori)</h2>
+<ul>
+<li>事後分布において確率が最大となる点</li>
+</ul>
+</div>
+</div>
+<div id="の補足-緑本のmcmc" class="section level1">
+<h1>1-7の補足: 緑本のMCMC</h1>
+<ul>
+<li><a href="https://www.amazon.co.jp/dp/400006973X">緑本</a> P.171
+例題：種子の生存確率</li>
+<li>観測データ：<span
+class="math inline">\(N_i個\)</span>の観察種子のうち、生きていて発芽能力があるものは<span
+class="math inline">\(y_i個\)</span>、死んだ種子は<span
+class="math inline">\(N-y_i個\)</span>」</li>
+<li><span class="math inline">\(N_i\)</span>を<span
+class="math inline">\(8\)</span>とし、<span
+class="math inline">\(20\)</span>個体について調べる（8個の観察種子のうち、生きてるものは<span
+class="math inline">\(y_i\)</span>個、死んでるものは<span
+class="math inline">\(8-y_i\)</span>個。これを20本の植物について調べる）</li>
+<li><span
+class="math inline">\(\{y_1,y_2,...,y_{20}\}=\{4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4\}\)</span></li>
+<li>このとき、種子個体iの生存確率qは?</li>
+<li>ある個体<span class="math inline">\(i\)</span>の生存種子数が<span
+class="math inline">\(y_i\)</span>である確率（ヒストグラム（下図左）を見ると過分散ではないので、<a
+href="baba.html#%E4%BA%8C%E9%A0%85%E5%88%86%E5%B8%83">二項分布(リンク先はq=0.3の例)</a>と考える＝統計モデル、ただしパラメータqは不明なので、データからそれを求めたい）：<span
+class="math inline">\(p(y_i|q)={}_8 C_{y_1} \cdot q^{y_1}
+\cdot(1-q)^{8-{y_1}}\)</span>
+<ul>
+<li>過分散：通常の（二項）分布よりも分散が大きいこと。サンプルごとに傾向に違いがあるような場合に見られる。</li>
+</ul></li>
+<li>尤度関数：<span class="math inline">\(L(q)=\prod_i
+p(y_i|q)\)</span>（パラメータqのときデータ<span
+class="math inline">\(y_i\)</span>が得られる確率の総乗）
+:パラメータq。qが変化すると尤度（モデルのもっともらしさ）が変化する。→尤度が最大になるqを求めればいい。これが真の値の推定値（頻度主義だから真の値がある）<span
+class="math inline">\(\hat{q}\)</span>（qハット）=最尤推定量</li>
+<li>対数尤度関数：<span class="math inline">\(logL(q) =
+\Sigma_i\{y_ilog\ q+(8-y_i)\ log(1-q)\}+定数\)</span>（下図右）</li>
+</ul>
+<blockquote>
+<ul>
+<li>さらに脱線。尤度の説明もう一度。
+<ul>
+<li>緑本2.4節</li>
+<li>尤度：あてはまりの良さ</li>
+<li><span
+class="math inline">\(\lambda=3.56\)</span>のポアソン分布に従う<span
+class="math inline">\(y_i\)</span>が<span
+class="math inline">\(\{y_1,y_2,y_3\}=\{2,2,4\}\)</span>であるときの尤度は<span
+class="math inline">\(p(y_1=2|\lambda=3.56)=0.180\)</span>, <span
+class="math inline">\(p(y_2=2|\lambda=3.56)=0.180\)</span> <span
+class="math inline">\(p(y_3=4|\lambda=3.56)=0.190\)</span>より、<span
+class="math inline">\(0.180\times0.180\times0.190=0.006156\)</span>となる</li>
+<li>一般化すると尤度<span
+class="math inline">\(L(\lambda)=\prod_{i}^{}p(yi|\lambda)=\prod_{i}\frac{\lambda^{y_i}
+exp(-\lambda)}{y_i!}\)</span>: 尤度は平均<span
+class="math inline">\(\lambda\)</span>のポアソン分布における<span
+class="math inline">\(y_i\)</span>の確率の総乗として表される</li>
+</ul></li>
+</ul>
+</blockquote>
+<ul>
+<li>尤度関数を対数変換したとき、その値が最も大きい（＝0に近い）とき最も尤度が大きい（＝あてはまりがいい）</li>
+<li>対数尤度関数の傾きが0になるqを探す（緑本2.4節参照）＝対数尤度関数を偏微分する</li>
+<li>対数尤度関数をqで偏微分：<span class="math inline">\(\frac{\partial\
+logL(q)}{\partial\ q} = \Sigma\{\frac{y_i}{q} - \frac{8-y_i}{1-q}\} =
+0\)</span> ? （全く自信ない）で、ここから<span
+class="math inline">\(\hat{q}=\frac{\Sigma{y_i}}{8\times20} =
+\frac{73}{8\times20}=0.45625\)</span>になるらしい（<a
+href="https://hazm.at/mox/math/statistics/inferential/binomial-distribution.html"
+class="uri">https://hazm.at/mox/math/statistics/inferential/binomial-distribution.html</a>）</li>
+<li>これで解析的に最尤推定値<span
+class="math inline">\(\hat{q}\)</span>を求めることができた!</li>
+<li>下の対数尤度関数のピークとなるところの<span
+class="math inline">\(q\)</span>の値ということ。</li>
+</ul>
+<div id="緑本の-種子の例のヒストグラムと対数尤度関数"
+class="section level2">
+<h2>★緑本の 「種子の例」のヒストグラムと対数尤度関数</h2>
+<pre class="r"><code>layout(matrix(1:2, ncol=2))
+data&lt;-c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)
+hist(data,breaks=c(-1:7))
+logb&lt;-function(x) sum(log(dbinom(data, 8, x)))
+q &lt;- seq(0.2, 0.7, 0.01)
+plot(q, sapply(q, logb), type=&#39;l&#39;)</code></pre>
+<p><img src="mcmc_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+<ul>
+<li>ここまでで、解析的に最尤推定量<span
+class="math inline">\(\hat{q}\)</span>を求めることができたけど、それができない場合はどうするか。分布がややこしかったりすると尤度関数はもっとややこしくて解けなくなることがある。
+<ul>
+<li>ここで、モンテカルロ法的なものが登場</li>
+</ul></li>
+<li>ふらふら試行錯誤による最尤推定（という例；緑本P173）
+<ul>
+<li>qを離散化→qを連続値ではなく0.01刻みの離散値と考える</li>
+<li>適当なqの初期値を決め、対数尤度を計算して評価。対数尤度関数に代入するだけ。パラメータはqだけだから計算可能。<span
+class="math inline">\(q=0.30\)</span>の場合、<span
+class="math inline">\(-46.38\)</span>になる。</li>
+</ul></li>
+<li>以下は「ふらふら試行錯誤の最尤推定」手順
+<ol style="list-style-type: decimal">
+<li>qはとなりの値にしか変化できない（ここで「となりの値」という考え方をするために、qを離散化したのだと思う）-&gt;0.30スタートなら0.29か0.31</li>
+<li>2つの値のうちどちらを選ぶかはランダムに決定し、対数尤度が現在よりも大きければそちらに移動</li>
+</ol>
+<ul>
+<li>0.31が選ばれた場合、対数尤度は-45.24となり、大きいから採用される
+-&gt; qは0.31になる</li>
+<li>仮に0.29が選ばれていれば、対数尤度は-47.62で小さくなってるので、qは0.30に戻る</li>
+</ul></li>
+<li>下、適当に実装してみた例。qの初期値(qi)の値を変えても同じ値に収束するのがわかる。
+<ul>
+<li>緑本ではqを0.01刻みで動かしてるけど、下では0.001刻みにしている。緑本の例のように100回では収束せず400回くらいかかってるけど、当然収束した値は、より真の値に近づく。</li>
+</ul></li>
+</ul>
+</div>
+<div id="ふらふら最尤推定" class="section level2">
+<h2>★ふらふら最尤推定</h2>
+<pre class="r"><code>nrp&lt;-1000
+qi&lt;-0.159
+n&lt;-8
+data&lt;-c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)
+logL&lt;-numeric(nrp)
+q&lt;-numeric(nrp)
+q[1]&lt;-qi
+for (rp in 1:nrp){
+  lh&lt;-numeric(length(data))
+  for (d in 1:length(data)){
+    lh[d]&lt;-choose(n,data[d])*q[rp]^data[d]*(1-q[rp])^(n-data[d])
+  }
+  logL[rp]&lt;-log(prod(lh))
+  if (rp&gt;1){
+    if (logL[rp]&lt;logL[rp-1]){
+      q[rp]&lt;-q[rp-1]
+      logL[rp]&lt;-logL[rp-1]
+    }
+  }
+  if (round(runif(1))){
+    q[rp+1]&lt;-q[rp]+0.001
+  }else{
+    q[rp+1]&lt;-q[rp]-0.001
+  }
+}
+plot(q[1:nrp],type=&#39;l&#39;, main=q[nrp])</code></pre>
+<p><img src="mcmc_files/figure-html/unnamed-chunk-3-1.png" width="60%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>このように、ランダムに生成した値を仮のqとして尤度を計算、尤度が高くなる場合だけ値を変化させるという方法で最尤値を推定することができた。緑本に書いてるように、ここまでのアルゴリズムは分かりやすさだけを考えた非効率なもの。実際の最尤推定はもっと効率いいそうです。</li>
+<li>これがモンテカルロ法（の一例）。</li>
+<li>メトロポリス法（MCMCアルゴリズムの一つ）
+<ul>
+<li>ふらふら試行錯誤をちょっと修正</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(q\)</span>の初期値を決める(<span
+class="math inline">\(q_i\)</span>)</li>
+<li><span
+class="math inline">\(q\)</span>を増やすか減らすかをランダムに決め、新しい値を作る(<span
+class="math inline">\(q^新\)</span>とする)</li>
+<li>尤度を計算。大きくなってたら<span
+class="math inline">\(q^新\)</span>を採用する</li>
+</ol>
+<ul>
+<li>— ここまではふらふら試行錯誤と同じ —</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li>尤度が小さくなる場合でも、確率<span
+class="math inline">\(r\)</span>で<span
+class="math inline">\(q^新\)</span>を採用して<span
+class="math inline">\(q\)</span>を<span
+class="math inline">\(q^新\)</span>に変更。そのときの確率は<span
+class="math inline">\(r=\frac{L(q^新)}{L(q)}\)</span>で計算する。尤度が高いほど採用される確率が高まる。手順3のように尤度が高くなっていれば確率が1より大きいから、必ず採用される。</li>
+</ol></li>
+<li>じゃあ実装してみよう。繰り返し回数(nrp)によってqの平均値は変わってくる。まずは10万回の例。</li>
+</ul>
+</div>
+<div id="メトロポリス法の実装例" class="section level2">
+<h2>★メトロポリス法の実装例</h2>
+<pre class="r"><code>layout(matrix(1:2, ncol=1))
+nrp&lt;-50000
+qi&lt;-0.30
+n&lt;-8
+data&lt;-c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)
+logL&lt;-numeric(nrp)
+q&lt;-numeric(nrp)
+q[1]&lt;-qi
+lr&lt;-1
+for (rp in 1:nrp){
+  lh&lt;-numeric(length(data))
+  for (d in 1:length(data)){
+    lh[d]&lt;-choose(n,data[d])*q[rp]^data[d]*(1-q[rp])^(n-data[d])
+  }
+  logL[rp]&lt;-log(prod(lh))
+  if (rp&gt;1){
+    lr&lt;-exp(logL[rp]-logL[rp-1])
+    if (runif(1)&gt;lr){
+      #print(lr)
+      q[rp]&lt;-q[rp-1]
+      logL[rp]&lt;-logL[rp-1]
+    }
+  }
+  if (round(runif(1))){
+    q[rp+1]&lt;-min(0.99,q[rp]+0.01)
+  }else{
+    q[rp+1]&lt;-max(0.01,q[rp]-0.01)
+  }
+}
+plot(q[1:nrp],type=&#39;l&#39;, main=mean(q))
+hist(q)</code></pre>
+<p><img src="mcmc_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
+<ul>
+<li>とりあえず緑本の感じにはなってるので実装例は良さそう。下図は生成したqのヒストグラム。
+<ul>
+<li>MCMCは一意の最尤値に収束するのではなく、変化する値の生成を行う。ただし、だんだんと収束していくことには変わりはない。</li>
+</ul></li>
+<li>定常分布
+<ul>
+<li>上のようなマルコフ連鎖によって生成した変数<span
+class="math inline">\(q\)</span>を考えたとき、
+<ul>
+<li>マルコフ連鎖が「一定の条件」<a href="#fn1" class="footnote-ref"
+id="fnref1"><sup>1</sup></a>を満たしているとき、<span
+class="math inline">\(q\)</span>は定常分布(<span
+class="math inline">\(p(q|y_i)\)</span>)という確率分布に従う</li>
+<li>そのため、十分な回数生成した変数の分布は定常分布に近似してくれる（上図下。ただし、上図では定常分布は書いてない。緑本p179参照。回数が少ないと定常分布から離れたヒストグラムになる。）</li>
+<li>定常分布：<span class="math inline">\(p(q|y_i)=\frac{L(q)}{\Sigma_q
+L(q)} \propto L(q)\)</span></li>
+</ul></li>
+<li>ここまでの流れ
+<ul>
+<li>二項分布というモデルとメトロポリス法によって<span
+class="math inline">\(q\)</span>をたくさん生成すると、それは定常分布に近似する。
+<ul>
+<li>この例題では、定常分布は尤度に比例する</li>
+</ul></li>
+<li>定常分布は、あるデータに統計モデルを当てはめたときに<span
+class="math inline">\(q\)</span>がとる値の確率分布と解釈できる（緑本p184）←ただし、ここの理屈はちょっと自身がない</li>
+</ul></li>
+</ul></li>
+<li>ベイズへ
+<ul>
+<li>さっきの式の右辺に事前分布をかけると、ベイズのカーネル（6章で出てきた
+<span class="math inline">\((D|\theta)\cdot f(\theta)\)</span>, あるいは
+<span
+class="math inline">\([\Pi^5_{i=1}\frac{1}{\sqrt{2\pi}}exp(-\frac{(x_i-\theta)^2}{2})]\cdot[\frac{1}{\sqrt{20000\pi}}exp(-\frac{\theta^2}{20000})]\)</span>(5つの売り上げデータをとるやつ)</li>
+<li>さっきまでやってた例が、そもそもベイズの枠組みとして考えられていたら…
+<ol style="list-style-type: decimal">
+<li>植物の個体のうち生存しているものはいくつあるか</li>
+<li>事前分布をおく</li>
+<li>個数はパラメータ<span
+class="math inline">\(q\)</span>に従う二項分布と考え、20個体のデータから事後分布を作る。</li>
+</ol></li>
+<li>この事後分布は事前分布に尤度をかけたもの。事前分布はパラメータ<span
+class="math inline">\(q\)</span>（馬場本の例だと<span
+class="math inline">\(\theta\)</span>）の関数だけど、まあ一様分布を使ったりするし、ということで定数だとすると、事後分布＝定常分布ということになる</li>
+<li>ここまでの流れによって、MCMCで得られる定常分布はベイズモデリングの事後分布であると言えることになる</li>
+</ul></li>
+<li><a
+href="#mcmc%E3%81%A8%E7%B5%B1%E8%A8%88%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0%E3%81%AE%E9%96%A2%E3%82%8F%E3%82%8A">もとの場所に戻る</a></li>
+</ul>
+<script type="text/javascript">
+$(function () {
+var headerHight = 50; //ヘッダの高さ
+$('a[href^=#]').click(function(){
+    var href= $(this).attr("href");
+      var target = $(href == "#" || href == "" ? 'html' : href);
+       var position = target.offset().top-headerHight; //ヘッダの高さ分位置をずらす
+    $("html, body").animate({scrollTop:position}, 550, "swing");　//この数値は移動スピード
+       return false;
+  });
+});
+</script>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>一定の条件に関する<a
+href="https://www.amazon.co.jp/dp/400730789X">文献</a><a href="#fnref1"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>

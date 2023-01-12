@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+        <meta name="author" content="Toshihide Imaruoka" />
+    
+    
+    <title>midori4</title>
+
+        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="mycss.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#glmのモデル選択aicとモデルの予測の良さ"
+            id="toc-glmのモデル選択aicとモデルの予測の良さ">4.
+            GLMのモデル選択–AICとモデルの予測の良さ–</a>
+            <ul>
+            <li><a href="#データは一つモデルはたくさん"
+            id="toc-データは一つモデルはたくさん">4.1
+            データは一つ、モデルはたくさん</a></li>
+            <li><a href="#統計モデルのあてはまりの悪さ逸脱度"
+            id="toc-統計モデルのあてはまりの悪さ逸脱度">4.2
+            統計モデルのあてはまりの悪さ：逸脱度</a></li>
+            <li><a href="#モデル選択基準aic"
+            id="toc-モデル選択基準aic">4.3 モデル選択基準AIC</a></li>
+            <li><a href="#aicを説明するためのまた別の例題"
+            id="toc-aicを説明するためのまた別の例題">4.4
+            AICを説明するためのまた別の例題</a></li>
+            <li><a href="#なぜaicでモデル選択してよいのか"
+            id="toc-なぜaicでモデル選択してよいのか">4.5
+            なぜAICでモデル選択してよいのか？</a></li>
+            <li><a href="#この章のまとめと参考文献"
+            id="toc-この章のまとめと参考文献">4.6
+            この章のまとめと参考文献</a></li>
+            </ul></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">my public memo</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li>
+        <a href="index.html">Home</a>
+      </li>
+      <li>
+        <a href="midori1.html">緑本1部</a>
+      </li>
+      <li>
+        <a href="midori2.html">緑本2部</a>
+      </li>
+      <li>
+        <a href="midori3.html">緑本3部</a>
+      </li>
+      <li>
+        <a href="midori4.html">緑本4部</a>
+      </li>
+      <li>
+        <a href="midori5.html">緑本5部</a>
+      </li>
+      <li>
+        <a href="midori6.html">緑本6部 </a>
+      </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">midori4</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Toshihide
+Imaruoka
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> 6/14/2022</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="glmのモデル選択aicとモデルの予測の良さ" class="section level1">
+<h1>4. GLMのモデル選択–AICとモデルの予測の良さ–</h1>
+<ul>
+<li>良いモデルはあてはまりの良いモデルではない
+<ul>
+<li>複雑なモデルほど当てはまるから</li>
+<li>あまりにパラメータが多いモデルはおそらく妥当ではない</li>
+</ul></li>
+<li>モデル選択
+<ul>
+<li>複数の統計モデルから「良い」モデルを選ぶ</li>
+<li>いろいろな方法＝基準</li>
+</ul></li>
+<li>AICというモデル選択基準
+<ul>
+<li>良い予測をするモデルが良いモデル</li>
+<li>×当てはまりの良さに基づく選択</li>
+</ul></li>
+<li>4.3までで一応の説明</li>
+<li>4.4以降は難易度高い（飛ばしてもOK）</li>
+</ul>
+<div id="データは一つモデルはたくさん" class="section level2">
+<h2>4.1 データは一つ、モデルはたくさん</h2>
+<ul>
+<li>第3章のデータ
+<ul>
+<li>種子数と体サイズと施肥処理</li>
+</ul></li>
+<li>モデル
+<ul>
+<li>体サイズが影響するモデル(<span class="math inline">\(y\sim
+x\)</span>)&lt;-glm()の第1引数</li>
+<li>施肥処理が影響するモデル(<span class="math inline">\(y\sim
+f\)</span>)</li>
+<li>体サイズと施肥処理が影響するモデル（<span
+class="math inline">\(y\sim x+f\)</span>)</li>
+<li>一定モデル(<span class="math inline">\(f\sim 1\)</span>)</li>
+</ul></li>
+<li>3章では対数尤度を最大にするパラメータを求め、そのパラメータに対する対数尤度＝最大対数尤度が当てはまりの良さだとした
+<ul>
+<li>最大対数尤度をもっとも大きいモデルが良いモデル？</li>
+<li>そうではない、という話。</li>
+</ul></li>
+</ul>
+</div>
+<div id="統計モデルのあてはまりの悪さ逸脱度" class="section level2">
+<h2>4.2 統計モデルのあてはまりの悪さ：逸脱度</h2>
+<ul>
+<li>逸脱度(deviance)
+<ul>
+<li>最大対数尤度を変形した統計量</li>
+<li>対数尤度：<span
+class="math inline">\(logL({\beta_j})\)</span>←あるパラメータ<span
+class="math inline">\(\beta_j\)</span>のときの対数尤度。簡単のため<span
+class="math inline">\(logL\)</span>と表す</li>
+<li>最大対数尤度：<span
+class="math inline">\(logL\)</span>を最大にするパラメータ<span
+class="math inline">\(\beta_j\)</span>のときの<span
+class="math inline">\(logL\)</span>：<span
+class="math inline">\(logL^*\)</span>とする</li>
+<li>逸脱度D
+<ul>
+<li><span class="math inline">\(D=-2logL^*\)</span></li>
+</ul></li>
+</ul></li>
+<li>ここから例
+<ul>
+<li>体サイズだけのモデルをxモデルと呼ぶ
+<ul>
+<li>xモデルの最大対数尤度<span
+class="math inline">\(logL^*\)</span>は-235.4</li>
+<li>D=470.8</li>
+</ul></li>
+<li>glm()の結果にこんな値はない。どこにいった？</li>
+</ul></li>
+</ul>
+<pre class="r"><code>dat&lt;-read.csv(&#39;kubobook_2012-2/poisson/data3a.csv&#39;)
+dat$f&lt;-as.factor(dat$f)
+f.x&lt;-glm(y~x, data=dat, family=poisson)
+print(f.x)</code></pre>
+<pre><code>## 
+## Call:  glm(formula = y ~ x, family = poisson, data = dat)
+## 
+## Coefficients:
+## (Intercept)            x  
+##     1.29172      0.07566  
+## 
+## Degrees of Freedom: 99 Total (i.e. Null);  98 Residual
+## Null Deviance:       89.51 
+## Residual Deviance: 84.99     AIC: 474.8</code></pre>
+<pre class="r"><code>logLik(f.x)</code></pre>
+<pre><code>## &#39;log Lik.&#39; -235.3863 (df=2)</code></pre>
+<pre class="r"><code>D.x&lt;-logLik(f.x)[1]*-2
+print(D.x)</code></pre>
+<pre><code>## [1] 470.7725</code></pre>
+<ul>
+<li>表示されてるのは以下のような値
+<ul>
+<li>Null Deviance</li>
+<li>Residual Deviance</li>
+<li>AIC</li>
+</ul></li>
+<li>まずはResidual Deviance（残差逸脱度）の説明
+<ul>
+<li>残差逸脱度＝逸脱度<span
+class="math inline">\(D\)</span>-（ポアソン分布モデルで可能な最小逸脱度）</li>
+<li>最小逸脱度：最多のパラメータを使った作ったモデル
+<ul>
+<li>データ100個の場合、パラメータ100個とする（意味はない）</li>
+<li>意味はないけど、当てはまりは良い</li>
+<li>最大対数尤度を計算
+<ul>
+<li>dpois(dat$y[1],
+dat$y[1])は、データがポアソン分布に従っているとして、ラムダがdat$y[1]のときに、データがdat$y[1]である確率のこと（0.16くらいになる）</li>
+<li>データとパラメータが一致するので、これは考えられる中で最も高い確率。</li>
+<li>その対数を全データ（100個）分足した数</li>
+<li>これは他のどんなモデルよりも小さくなるはず（確率は大きいけど対数を取るから小さい）</li>
+<li>これがポアソン分布で可能な最小逸脱度（今の場合、下の計算のように385.8くらいになる</li>
+<li>xモデルのD（470.8）と最小逸脱度（385.8）の差が、xモデルの残差逸脱度（84.993）</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<pre class="r"><code>D.min&lt;-sum(log(dpois(dat$y, lambda=dat$y))) * -2
+D.x-D.min</code></pre>
+<pre><code>## [1] 84.993</code></pre>
+<ul>
+<li>残差逸脱度：最小逸脱度を基準にした、あてはまりの悪さの相対値</li>
+<li>次に最大の逸脱度について考えてみる（図4.3の一番上）
+<ul>
+<li>もっとも当てはまりの悪いモデルのときに逸脱度は最大のはず</li>
+<li>切片だけで作られたモデルがそれにあたる</li>
+<li>最大の逸脱度は475.3くらいで、最小との差は89.5くらい
+<ul>
+<li>これがNull Deviance</li>
+</ul></li>
+</ul></li>
+<li>このあたりのまとめ：表4.2
+<ul>
+<li>パラメータが増えるとあてはまりが良い</li>
+</ul></li>
+</ul>
+<pre class="r"><code>f.null&lt;-glm(y~1, data=dat, family=poisson)
+print(f.null)</code></pre>
+<pre><code>## 
+## Call:  glm(formula = y ~ 1, family = poisson, data = dat)
+## 
+## Coefficients:
+## (Intercept)  
+##       2.058  
+## 
+## Degrees of Freedom: 99 Total (i.e. Null);  99 Residual
+## Null Deviance:       89.51 
+## Residual Deviance: 89.51     AIC: 477.3</code></pre>
+<pre class="r"><code>print(logLik(f.null)[1]*-2-D.min) # このモデルの逸脱度とフルモデルの逸脱度の差</code></pre>
+<pre><code>## [1] 89.50694</code></pre>
+</div>
+<div id="モデル選択基準aic" class="section level2">
+<h2>4.3 モデル選択基準AIC</h2>
+<ul>
+<li>モデルのあてはまりが良くても、パラメータが多いと「今の」データへの特殊化をしているだけかも
+<ul>
+<li>予測の良さを損なうかも</li>
+</ul></li>
+<li>AIC: モデル選択基準の一つ
+<ul>
+<li>予測の良さを重視するモデル選択基準</li>
+<li><span class="math inline">\(AIC =
+-2\{(最大対数尤度)-(最尤推定したパラメータ数)\}\)</span>
+<ul>
+<li>= <span class="math inline">\(-2(logL^*-k)\)</span></li>
+<li>= <span class="math inline">\(D+2k\)</span>
+<ul>
+<li><span class="math inline">\(logL^*\)</span>は-D/2だから(<span
+class="math inline">\(D=-2logL^*\)</span> p71)</li>
+</ul></li>
+</ul></li>
+<li>これで計算するとxモデルがAIC最小となる（表4.3）</li>
+</ul></li>
+</ul>
+</div>
+<div id="aicを説明するためのまた別の例題" class="section level2">
+<h2>4.4 AICを説明するためのまた別の例題</h2>
+<ul>
+<li>新しい架空データ
+<ul>
+<li>個体<span class="math inline">\(i\)</span>の種子数<span
+class="math inline">\(y_i\)</span>と体サイズ<span
+class="math inline">\(x_i\)</span>が50個体分</li>
+<li>応答変数<span class="math inline">\(y_i\)</span>、説明変数<span
+class="math inline">\(x_i\)</span></li>
+<li>ただし<span class="math inline">\(x_i\)</span>は<span
+class="math inline">\(y_i\)</span>とは関係なし</li>
+</ul></li>
+<li>次のようなモデルを比較
+<ul>
+<li><span class="math inline">\(log\lambda_i=\beta_1\)</span> –
+一定モデル(<span class="math inline">\(k=1\)</span>)</li>
+<li><span class="math inline">\(log\lambda_i=\beta_1+\beta_2x_i\)</span>
+– xモデル(<span class="math inline">\(k=2\)</span>)
+<ul>
+<li>ちなみに、この2つのモデルはネストしている(nested)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="なぜaicでモデル選択してよいのか" class="section level2">
+<h2>4.5 なぜAICでモデル選択してよいのか？</h2>
+<ul>
+<li>平均対数尤度：統計モデルの予測の良さ</li>
+<li>バイアス補正とは？</li>
+</ul>
+<div id="統計モデルの予測の良さ平均対数尤度" class="section level3">
+<h3>4.5.1 統計モデルの予測の良さ：平均対数尤度</h3>
+<ul>
+<li>ここでは、一定モデルを使って平均対数尤度を説明
+<ul>
+<li>平均種子数<span
+class="math inline">\(\lambda_i=exp\beta_1\)</span></li>
+<li>最尤推定法によって、対数尤度が最大となる<span
+class="math inline">\(\hat{\beta}_1\)</span>を求める
+<ul>
+<li><span class="math inline">\(\hat{\beta}_1\)</span>=2.04</li>
+</ul></li>
+<li>真のパラメータは2.08だった（<span class="math inline">\(\lambda=8;
+log8=2.08\)</span>)</li>
+<li>図4.6：真のモデルからデータを生成し、データからパラメータ推定
+<ul>
+<li>最大対数尤度<span
+class="math inline">\(logL^*\)</span>は観測データに対する当てはまりの良さで、真のモデルに対するものではない</li>
+</ul></li>
+<li>「あてはまりの良さ」は、たまたまその時にあるデータに対するもの</li>
+<li>モデルが、次に真のモデルから生成されたデータをどれくらい予測できるか、なら良さそう</li>
+<li>今の例題では真のモデルが分かってるので、予測の良さ評価用のデータを作ってやってみる
+<ul>
+<li>真のモデルに200セット生成させる</li>
+<li>それぞれに対する一定モデル(<span
+class="math inline">\(\hat{\beta_1}=2.04\)</span>)の当てはまりの良さを対数尤度で評価、平均する＝平均対数尤度＝<span
+class="math inline">\(E(logL)\)</span>
+<ul>
+<li>パラメータ2.04は最初の1データを元に決め、その当てはまりの良さを同じデータで評価したもの（そういう決め方だから当たり前のことを言ってる）</li>
+<li>でも、最初の1データは真のモデルからたまたま生成されたものだから、それだけで評価してはいけない</li>
+<li>だから、別のデータも評価して、その平均(<span
+class="math inline">\(E(logL)\)</span>)を出そう、ということ。</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="最大対数尤度のバイアス補正" class="section level3">
+<h3>4.5.2 最大対数尤度のバイアス補正</h3>
+<ul>
+<li>そういうことを12回繰り返す（図4.9(B)）</li>
+<li>たまたまデータへの<span class="math inline">\(logL^*\)</span>と<span
+class="math inline">\(E(logL)\)</span>の大小関係はばらばら
+<ul>
+<li>この関係に関する分布を考えるため、<span
+class="math inline">\(b=logL^*-E(logL)\)</span>を定義＝バイアス</li>
+</ul></li>
+<li>バイアスbの分布は図4.10、平均1.01</li>
+<li>予測用のデータをたくさん作ってやってみたら、「たまたま」のデータで評価した最大対数尤度よりも1程度大きくなることが分かった
+<ul>
+<li>この<span
+class="math inline">\(E(logL)\)</span>はモデルの良さの指標として使えそうな気がする。</li>
+<li><span
+class="math inline">\(E(logL)=logL^*-1\)</span>と言えそうなので、そうすればいいのでは＝バイアス補正
+<ul>
+<li>この、今の計算でバイアスが1となったのは、偶然ではなく、解析的にも導出できるらしい（平均対数尤度＝<span
+class="math inline">\(logL^*-k\)</span>
+kはパラメータ数；文献が引用されている）</li>
+<li>これに-2をかけたものがAIC＝予測の悪さ</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="ネストしているglm間のaic比較" class="section level3">
+<h3>4.5.3 ネストしているGLM間のAIC比較</h3>
+<ul>
+<li>ネストしてるモデル間の比較について</li>
+<li>AICが小さい方を選ぶというのが基本的な考え方（平均対数尤度<span
+class="math inline">\(E(logL)\)</span>＝平均的な予測の良さに-2をかけたものがAICだから）</li>
+<li>ただ、前の節で<span
+class="math inline">\(E(logL)\)</span>を出したときに使った平均バイアスを求めるときのばらつきが大きかったのが気になる（図4.10：<span
+class="math inline">\(logL^*とE(logL)の差が結構ばらつくということ\)</span>）
+<ul>
+<li>この「気になる」に対して、ネストしてるモデル間の比較ではバイアスのばらつきは小さいよということを示そうとしている</li>
+</ul></li>
+<li>さっきの一定モデルとxモデルをAICで比較してみる
+<ul>
+<li>一定モデルは<span class="math inline">\(k=1\)</span>, xモデルは<span
+class="math inline">\(k=2\)</span>（体サイズのパラメータが増えてる）</li>
+<li>増えた変数は結果に影響しないことが分かってるので、AICは2くらい大きくなる（<span
+class="math inline">\(-2\times
+-k\)</span>)＝2くらい予測が悪化するはず</li>
+<li>以下、考え方の流れ
+<ul>
+<li>まず、最大対数尤度（＝「たまたま」データとの当てはまりの良さ）の比較（図4.11(A)）
+<ul>
+<li>実際に計算してみると<span
+class="math inline">\(xモデルのlogL^*-一定モデルのlogL^*\)</span>の平均は0.54</li>
+<li>変数を増やし、パラメータを増やしたことであてはまりの良さは良くなってしまう（無関係の変数だから良くなるはずがない＝とにかくパラメータを増やせば、「たまたま」データとの当てはまりはどんどん良くなる可能性がある）</li>
+</ul></li>
+<li>次に平均対数尤度（＝予測の良さ）を比較（図4.11(B)）
+<ul>
+<li>今度は<span
+class="math inline">\(xモデルのE(logL)-一定モデルのE(logL)\)</span>の平均値は-0.54</li>
+<li>パラメータを増やしたことで予測が悪くなった</li>
+</ul></li>
+<li>さらに一定モデルのバイアス(b)とxモデルのバイアス(b)の差の分布をみる（図4.12）
+<ul>
+<li><span
+class="math inline">\(xモデルのlogL^*-E(logL)-(一定モデルのlogL^*-E(logL))\)</span>（図4.13）</li>
+<li>0.54-(-0.54)なので1.08くらいになる</li>
+<li>図4.12にあるように、バイアス差の分布はあまり大きくならない＝AIC使ってもいいんじゃない？という話</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>じゃあ、無意味じゃない変数（モデルではパラメータ）を増やしたときには？
+<ul>
+<li>図4.14を読む
+<ul>
+<li>当てはまりの良さ（白い円）も良くなるけど、AIC（グレイ）も良くなる</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="この章のまとめと参考文献" class="section level2">
+<h2>4.6 この章のまとめと参考文献</h2>
+<ul>
+<li>複数のモデルから最適なものを選ぶとき、当てはまりの良さ（<span
+class="math inline">\(logL^*\)</span>)でいいか？</li>
+<li>この章では当てはまりの良さではなく逸脱度<span
+class="math inline">\(D=-2\times logL^*\)</span>で考えた</li>
+<li>意味のない変数の追加でも<span
+class="math inline">\(logL^*\)</span>は小さくなってしまう</li>
+<li>AICは<span
+class="math inline">\(E(logL)=logL^*-b\)</span>をもとにしている。バイアス補正してるのが大きい。</li>
+<li>AICに関する誤解
+<ul>
+<li>あてはまりの良さの指標ではない</li>
+<li>真のモデルを選べるわけでもない（真のモデルよりパラメータが少ないモデルを選ぶことがある）</li>
+<li>FAQは<a
+href="https://kuboweb.github.io/-kubo/ce/FaqModelSelection.html">サポートサイト</a>まで</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>

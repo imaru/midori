@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+        <meta name="author" content="Toshihide Imaruoka" />
+    
+    
+    <title>緑本MCMC</title>
+
+        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#説明" id="toc-説明">説明</a></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">my public memo</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li>
+        <a href="index.html">Home</a>
+      </li>
+      <li>
+        <a href="midori1.html">緑本1部</a>
+      </li>
+      <li>
+        <a href="midori2.html">緑本2部</a>
+      </li>
+      <li>
+        <a href="midori3.html">緑本3部</a>
+      </li>
+      <li>
+        <a href="midori4.html">緑本4部</a>
+      </li>
+      <li>
+        <a href="midori5.html">緑本5部</a>
+      </li>
+      <li>
+        <a href="midori6.html">緑本6部 </a>
+      </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">緑本MCMC</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Toshihide
+Imaruoka
+      </p>
+              
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="説明" class="section level2">
+<h2>説明</h2>
+<ul>
+<li><a href="https://www.amazon.co.jp/dp/400006973X">緑本</a> P.171
+例題：種子の生存確率</li>
+<li>観測データ：<span
+class="math inline">\(N_i個の観察種子のうち、生きていて発芽能力があるものはy_i個、死んだ種子はN-y_i個」\)</span></li>
+<li><span
+class="math inline">\(N_iを8とし、20個体について調べる\)</span></li>
+<li><span
+class="math inline">\(\{y_1,y_2,...,y_{20}\}=\{4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4\}\)</span></li>
+<li>このとき、種子個体iの生存確率qは?</li>
+<li>ある個体<span class="math inline">\(i\)</span>の生存種子数が<span
+class="math inline">\(y_i\)</span>である確率（ヒストグラム（下図）を見ると過分散ではないので、二項分布と考える＝統計モデル、ただしパラメータqは不明なので、データからそれを求めたい）：<span
+class="math inline">\(p(y_i|q)={}_8 C_{y_1} \cdot q^{y_1}
+\cdot(1-q)^{8-{y_1}}\)</span></li>
+<li>尤度関数：<span class="math inline">\(L(q)=\prod_i p(y_i|q)\)</span>
+:パラメータq。qが変化すると尤度（モデルのもっともらしさ）が変化する。→尤度が最大になるqを求めればいい。これが真の値の推定値（頻度主義だから真の値がある）<span
+class="math inline">\(\hat{q}=最尤推定量\)</span></li>
+<li>対数尤度関数：<span class="math inline">\(logL(q) =
+\Sigma_i\{y_ilog\ q+(8-y_i)\ log(1-q)\}+定数\)</span></li>
+<li>過分散：通常の二項分布よりも分散が大きいこと。サンプルごとに傾向に違いがあるような場合に見られる。
+<ul>
+<li>さらに脱線。尤度の説明もう一度。</li>
+<li>緑本2.4節</li>
+<li>尤度：あてはまりの良さ</li>
+<li><span
+class="math inline">\(\lambda=3.56\)</span>のポアソン分布に従う<span
+class="math inline">\(y_i\)</span>が<span
+class="math inline">\(\{y_1,y_2,y_3\}=\{2,2,4\}\)</span>であるときの尤度は<span
+class="math inline">\(p(y_1=2|\lambda=3.56)=0.180\)</span>, <span
+class="math inline">\(p(y_2=2|\lambda=3.56)=0.180\)</span> <span
+class="math inline">\(p(y_3=4|\lambda=3.56)=0.190\)</span>より、<span
+class="math inline">\(0.180\times0.180\times0.190=0.006156\)</span>となる</li>
+<li>一般化すると尤度<span
+class="math inline">\(L(\lambda)=\prod_{i}^{}p(yi|\lambda)=\prod_{i}\frac{\lambda^{y_i}
+exp(-\lambda)}{y_i!}\)</span>: <span
+class="math inline">\(尤度は平均\lambdaのポアソン分布におけるyiの確率の総乗として表される\)</span></li>
+</ul></li>
+<li>尤度関数を対数変換したとき、その値が最も大きい（＝0に近い）とき最も尤度が大きい（＝あてはまりがいい）</li>
+<li>対数尤度関数の傾きが0になるqを探す（緑本2.4節参照）＝対数尤度関数を偏微分する</li>
+<li>対数尤度関数をqで偏微分：<span class="math inline">\(\frac{\partial\
+logL(q)}{\partial\ q} = \Sigma\{\frac{y_i}{q} - \frac{8-y_i}{1-q}\} =
+0\)</span> ? で、ここから<span
+class="math inline">\(\hat{q}=\frac{\Sigma{y_i}}{8\times20} =
+\frac{73}{8\times20}=0.45625\)</span>になるらしい（<a
+href="https://hazm.at/mox/math/statistics/inferential/binomial-distribution.html"
+class="uri">https://hazm.at/mox/math/statistics/inferential/binomial-distribution.html</a>）</li>
+<li>これで解析的に最尤推定値<span
+class="math inline">\(\hat{q}\)</span>を求めることができた!</li>
+<li>下の対数尤度関数のピークとなるところに一致。</li>
+</ul>
+<pre class="r"><code>layout(matrix(1:2, ncol=2))
+data&lt;-c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)
+hist(data,breaks=c(-1:7))
+logb&lt;-function(x) sum(log(dbinom(data, 8, x)))
+q &lt;- seq(0.2, 0.7, 0.01)
+plot(q, sapply(q, logb), type=&#39;l&#39;)</code></pre>
+<p><img src="midori_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
+<ul>
+<li>ここまでは解析的に最尤推定量<span
+class="math inline">\(\hat{q}\)</span>を求めることができたけど、それができない場合はどうするか。分布がややこしかったりすると尤度関数はもっとややこしくて解けなくなることがある。
+<ul>
+<li>ここで、モンテカルロ法的なものが登場</li>
+</ul></li>
+<li>ふらふら試行錯誤による最尤推定（という例；緑本P173）
+<ul>
+<li>qを離散化→qを連続値ではなく0.01刻みの離散値と考える</li>
+<li>適当なqの初期値を決め、対数尤度を計算して評価。対数尤度関数に代入するだけ。パラメータはqだけだから計算可能。<span
+class="math inline">\(q=0.30の場合、-46.38になる\)</span>。</li>
+</ul></li>
+<li>以下は「ふらふら試行の最尤推定」手順
+<ol style="list-style-type: decimal">
+<li>qはとなりの値にしか変化できない-&gt;0.30スタートなら0.29か0.31</li>
+<li>となりのうちどちらを選ぶかはランダムに決定し、対数尤度が現在よりも大きければそちらに移動</li>
+</ol>
+<ul>
+<li>0.31が選ばれた場合、対数尤度は-45.24となり、大きいから選択される
+-&gt; qは0.31になる</li>
+<li>仮に0.29が選ばれていれば、対数尤度は-47.62で小さくなってるので、qは0.30に戻る</li>
+</ul></li>
+<li>下、適当に実装してみた例。qの初期値(qi)の値を変えても同じ値に収束するのがわかる。
+<ul>
+<li>緑本ではqを0.01刻みで動かしてるけど、下では0.001刻みにしている。緑本の例のように100回では収束せず400回くらいかかってるけど、収束した値は当然より真の値に近づく。</li>
+</ul></li>
+</ul>
+<pre class="r"><code>nrp&lt;-1000
+qi&lt;-0.300
+n&lt;-8
+data&lt;-c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)
+logL&lt;-numeric(nrp)
+q&lt;-numeric(nrp)
+q[1]&lt;-qi
+for (rp in 1:nrp){
+  lh&lt;-numeric(length(data))
+  for (d in 1:length(data)){
+    lh[d]&lt;-choose(n,data[d])*q[rp]^data[d]*(1-q[rp])^(n-data[d])
+  }
+  logL[rp]&lt;-log(prod(lh))
+  if (rp&gt;1){
+    if (logL[rp]&lt;logL[rp-1]){
+      q[rp]&lt;-q[rp-1]
+      logL[rp]&lt;-logL[rp-1]
+    }
+  }
+  if (round(runif(1))){
+    q[rp+1]&lt;-q[rp]+0.001
+  }else{
+    q[rp+1]&lt;-q[rp]-0.001
+  }
+}
+plot(q[1:nrp],type=&#39;l&#39;, main=q[nrp])</code></pre>
+<p><img src="midori_files/figure-html/unnamed-chunk-2-1.png" width="60%" style="display: block; margin: auto;" />
+-
+このように、ランダムに生成した値を仮のqとして尤度を計算、尤度が高くなる場合だけ値を変化させるという方法で最尤値を推定することができた。緑本に書いてるように、ここまでのアルゴリズムは分かりやすさだけを考えた非効率なもの。実際の最尤推定はもっと効率いいそうです。
+- メトロポリス法（MCMCアルゴリズムの一つ） -
+ふらふら試行錯誤をちょっと修正 1. <span
+class="math inline">\(q\)</span>の初期値を決める(qi) 2. <span
+class="math inline">\(q\)</span>を増やすか減らすかをランダムに決める(<span
+class="math inline">\(q^新\)</span>) 3.
+尤度を計算。大きくなってたら<span
+class="math inline">\(q^新\)</span>を採用 - —
+ここまではふらふら試行錯誤と同じ — 4.
+尤度が小さくなる場合でも、確率<span
+class="math inline">\(r\)</span>で<span
+class="math inline">\(q\)</span>を<span
+class="math inline">\(q^真\)</span>に変更。<span
+class="math inline">\(r=\frac{L(q^新)}{L(q)}\)</span>。 -
+じゃあ実装してみよう。</p>
+<pre class="r"><code>layout(matrix(1:2, ncol=2))
+nrp&lt;-100000
+qi&lt;-0.30
+n&lt;-8
+data&lt;-c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)
+logL&lt;-numeric(nrp)
+q&lt;-numeric(nrp)
+q[1]&lt;-qi
+lr&lt;-1
+for (rp in 1:nrp){
+  lh&lt;-numeric(length(data))
+  for (d in 1:length(data)){
+    lh[d]&lt;-choose(n,data[d])*q[rp]^data[d]*(1-q[rp])^(n-data[d])
+  }
+  logL[rp]&lt;-log(prod(lh))
+  if (rp&gt;1){
+    lr&lt;-exp(logL[rp]-logL[rp-1])
+    if (runif(1)&gt;lr){
+      #print(lr)
+      q[rp]&lt;-q[rp-1]
+      logL[rp]&lt;-logL[rp-1]
+    }
+  }
+  if (round(runif(1))){
+    q[rp+1]&lt;-min(0.99,q[rp]+0.01)
+  }else{
+    q[rp+1]&lt;-max(0.01,q[rp]-0.01)
+  }
+}
+plot(q[1:nrp],type=&#39;l&#39;, main=mean(q))
+hist(q)</code></pre>
+<p><img src="midori_files/figure-html/unnamed-chunk-3-1.png" width="768" /></p>
+<ul>
+<li>とりあえず緑本の感じにはいってる。右側は生成したqのヒストグラム。
+<ul>
+<li>MCMCは一意の最尤値に収束するのではなく、変化する値の生成を行う</li>
+</ul></li>
+<li>定常分布
+<ul>
+<li>上のようなマルコフ連鎖によって生成した変数q</li>
+<li>マルコフ連鎖が「一定の条件」<a href="#fn1" class="footnote-ref"
+id="fnref1"><sup>1</sup></a>を満たしているとき、qは定常分布(<span
+class="math inline">\(p(q|y_i)\)</span>)という確率分布に従う</li>
+<li>ただし、上でやったのは尤度をもとにしたマルコフ連鎖によってたくさんの変数を生成しただけ</li>
+<li>十分な数、生成した変数の分布をみると、それは定常分布に近似する（上図）</li>
+<li>定常分布：<span class="math inline">\(p(q|y_i)=\frac{L(q)}{\Sigma_q
+L(q)} \propto L(q)\)</span></li>
+<li>二項分布というモデルとメトロポリス法によって、尤度に比例する<span
+class="math inline">\(q\)</span>の確率分布を推定できた、ということ</li>
+</ul></li>
+<li>ベイズへ
+<ul>
+<li>さっきの式の右辺に事前分布をかけると、ベイズのカーネル（6章で出てきた
+<span class="math inline">\((D|\theta)f(\theta)\)</span>, あるいは <span
+class="math inline">\([\Pi^5_{i=1}\frac{1}{\sqrt{2\pi}}exp(-\frac{(x_i-\theta)^2}{2})]\cdot[\frac{1}{\sqrt{20000\pi}}exp(-\frac{\theta^2}{20000})]\)</span>(5つの売り上げデータをとるやつ)</li>
+<li>さっきまでやってた例が、そもそもベイズの枠組みとして考えられていたら…
+<ol style="list-style-type: decimal">
+<li>植物の個体のうち生存しているものはいくつあるか</li>
+<li>事前分布をおく</li>
+<li>個数はパラメータqに従う二項分布と考え、20個体のデータから事後分布を作る。</li>
+</ol></li>
+<li>この事後分布は事前分布に尤度をかけたもの。事前分布が定数だとすると、定常分布と同じ</li>
+<li>ここまでの流れによって、MCMCの定常分布はベイズモデリングの事後分布であると言えることになる</li>
+</ul></li>
+</ul>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>一定の条件に関する<a
+href="https://www.amazon.co.jp/dp/400730789X">文献</a><a href="#fnref1"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>
