@@ -10,7 +10,7 @@
     
     <title>midori6</title>
 
-        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
         <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
@@ -298,20 +298,12 @@ plot(y,d3, type=&#39;b&#39;, col=3, ylim=c(0,0.5))
 # ggplot2でグラフ
 # データの加工にtidyverseをつかってる
 library(tidyverse)</code></pre>
-<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## ── Attaching packages ─────────────── tidyverse 1.3.2 ──
-## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
-## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
-## ✔ readr   2.1.3      ✔ forcats 0.5.2</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.2.2</code></pre>
-<pre><code>## ── Conflicts ────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+## ✔ tibble  3.1.7     ✔ dplyr   1.0.9
+## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
+## ✔ readr   2.1.2     ✔ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p><img src="midori6_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
@@ -488,8 +480,8 @@ class="math inline">\(f_i\)</span>を含むモデルが最も良く予測する�
 </ul>
 <pre class="r"><code>library(MASS)</code></pre>
 <pre><code>## 
-## Attaching package: &#39;MASS&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+##  次のパッケージを付け加えます: &#39;MASS&#39;</code></pre>
+<pre><code>##  以下のオブジェクトは &#39;package:dplyr&#39; からマスクされています:
 ## 
 ##     select</code></pre>
 <pre class="r"><code>stepAIC(res)</code></pre>
