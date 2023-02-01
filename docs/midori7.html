@@ -11,7 +11,7 @@
     
     <title>midori7</title>
 
-        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
         <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
@@ -129,6 +129,9 @@
             <li><a href="#一般化線形混合モデル"
             id="toc-一般化線形混合モデル">7.3
             一般化線形混合モデル</a></li>
+            <li><a href="#一般化線形混合モデルの最尤推定"
+            id="toc-一般化線形混合モデルの最尤推定">7.4
+            一般化線形混合モデルの最尤推定</a></li>
             </ul></li>
             </ul>
           </div>
@@ -496,6 +499,25 @@ class="math inline">\(r_i\)</span>は平均0としているから全体の平均
 </ul></li>
 </ul>
 </div>
+</div>
+<div id="一般化線形混合モデルの最尤推定" class="section level2">
+<h2>7.4 一般化線形混合モデルの最尤推定</h2>
+<ul>
+<li>モデルに<span
+class="math inline">\(r_i\)</span>が入ってくると最尤推定できない
+<ul>
+<li>個体差だから個体数分求めなくてはいけない→データ数よりもパラメータ数が大きくなる</li>
+</ul></li>
+<li>でも他のパラメータは最尤推定したい
+<ul>
+<li>どうする？</li>
+<li>尤度<span class="math inline">\(L_i\)</span>を求めるときに<span
+class="math inline">\(r_i\)</span>を積分する
+<ul>
+<li>確率分布は積分すると1になる</li>
+</ul></li>
+</ul></li>
+</ul>
 </div>
 </div>
 </div>
