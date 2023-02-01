@@ -12,3 +12,4 @@ output:
 - [緑本4](./midori4.html)
 - [緑本5](./midori5.html)
 - [緑本6](./midori6.html)
+- [緑本7](./midori7.html)

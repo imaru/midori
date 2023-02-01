@@ -183,6 +183,9 @@
       <li>
         <a href="midori6.html">緑本6部 </a>
       </li>
+      <li>
+        <a href="midori7.html">緑本7部 </a>
+      </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               
@@ -632,10 +635,6 @@ class="math inline">\(logA_i\)</span>が入っている＝オフセット項
 </ul></li>
 </ul></li>
 </ul>
-</div>
-</div>
-<div id="正規分布とその尤度" class="section level2">
-<h2>6.7 正規分布とその尤度</h2>
 <pre class="r"><code>dat2&lt;-read.csv(&#39;kubobook_2012-2/binomial/data4b.csv&#39;)
 plot(dat2$A,dat2$y)</code></pre>
 <p><img src="midori6_files/figure-html/unnamed-chunk-8-1.png" width="768" /></p>
@@ -650,6 +649,34 @@ plot(dat2$A,dat2$y)</code></pre>
 ## Degrees of Freedom: 99 Total (i.e. Null);  98 Residual
 ## Null Deviance:       261.5 
 ## Residual Deviance: 81.61     AIC: 650.3</code></pre>
+</div>
+</div>
+<div id="正規分布とその尤度" class="section level2">
+<h2>6.7 正規分布とその尤度</h2>
+<ul>
+<li>正規分布：連続量をの分布＝ガウス分布
+<ul>
+<li><span class="math inline">\(\mu\)</span>: 平均値</li>
+<li><span class="math inline">\(\sigma\)</span>: ばらつき</li>
+</ul></li>
+<li><span
+class="math inline">\(p(y|\mu,\sigma)=\frac{1}{\sqrt(2\pi\sigma~2)}exp\{-\frac{(y-\mu)~2}{2\sigma~2}\}\)</span>
+<ul>
+<li>確率密度関数</li>
+</ul></li>
+</ul>
+<pre class="r"><code>y&lt;-seq(-5,5,0.1)
+plot(y, dnorm(y, mean=0, sd=1), type=&#39;l&#39;)</code></pre>
+<p><img src="midori6_files/figure-html/unnamed-chunk-9-1.png" width="768" /></p>
+<ul>
+<li>確率密度の積分値が確率</li>
+<li>確率密度関数: <span class="math inline">\(p(y|\mu,\sigma)\)</span>
+として <span class="math inline">\(p(1.2\leqq
+y\leqq1.8|\mu,\sigma)\)</span> は <span
+class="math inline">\(\int^{1.8}_{1.2}p(y|\mu,\sigma)dy\)</span></li>
+</ul>
+<pre class="r"><code>pnorm(1.8, 0, 1)-pnorm(1.2,0,1)</code></pre>
+<pre><code>## [1] 0.07913935</code></pre>
 </div>
 </div>
 </div>

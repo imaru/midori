@@ -16,4 +16,6 @@ navbar:
       href: midori5.html
     - text: "緑本6部 "
       href: midori6.html
+    - text: "緑本7部 "
+      href: midori7.html
 output_dir: "docs"

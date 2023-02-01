@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+        <meta name="author" content="Toshihide Imaruoka" />
+    
+        <meta name="date" content="2022-12-21" />
+    
+    <title>midori7</title>
+
+        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="mycss.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#一般化線形混合モデルglmm個体差のモデリング"
+            id="toc-一般化線形混合モデルglmm個体差のモデリング">7.
+            一般化線形混合モデル（GLMM）–個体差のモデリング–</a>
+            <ul>
+            <li><a href="#例題glmでは説明できないカウントデータ"
+            id="toc-例題glmでは説明できないカウントデータ">7.1
+            例題：GLMでは説明できないカウントデータ</a></li>
+            <li><a href="#過分散と個体差" id="toc-過分散と個体差">7.2
+            過分散と個体差</a></li>
+            <li><a href="#一般化線形混合モデル"
+            id="toc-一般化線形混合モデル">7.3
+            一般化線形混合モデル</a></li>
+            </ul></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">my public memo</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li>
+        <a href="index.html">Home</a>
+      </li>
+      <li>
+        <a href="midori1.html">緑本1部</a>
+      </li>
+      <li>
+        <a href="midori2.html">緑本2部</a>
+      </li>
+      <li>
+        <a href="midori3.html">緑本3部</a>
+      </li>
+      <li>
+        <a href="midori4.html">緑本4部</a>
+      </li>
+      <li>
+        <a href="midori5.html">緑本5部</a>
+      </li>
+      <li>
+        <a href="midori6.html">緑本6部 </a>
+      </li>
+      <li>
+        <a href="midori7.html">緑本7部 </a>
+      </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">midori7</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Toshihide
+Imaruoka
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> 12/21/2022</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="一般化線形混合モデルglmm個体差のモデリング"
+class="section level1">
+<h1>7. 一般化線形混合モデル（GLMM）–個体差のモデリング–</h1>
+<ul>
+<li>GLM: 応答変数<span class="math inline">\(y_i\)</span>を説明変数<span
+class="math inline">\(x_i\)</span>と結びつける
+<ul>
+<li>そのための部品が確率分布、リンク関数、線形予測子</li>
+<li>データに合うモデルを作る方法なんだけど、現実のデータに含まれるばらつきは確率分布だけではうまく説明できない</li>
+</ul></li>
+<li>現実のデータに含まれるばらつきの例示
+<ul>
+<li>たくさんの植物個体の種子数を調べる
+<ul>
+<li>ある説明変数によって種子数が異なる</li>
+<li>その説明変数が、全個体で同じだとすると→<span
+class="math inline">\(\lambda\)</span>が同じ値になるから、どの個体の種子数も同じ分布に従うはず</li>
+<li>でも、現実にはそうはならないよね、という話</li>
+</ul></li>
+<li>個体差
+<ul>
+<li>観測できない個体差というものが必ずある</li>
+<li>観測できないけど、「観測しない個体差」としてモデルに組み込むことはできる
+<ul>
+<li>いままでのGLMには、そういう項はなかった</li>
+</ul></li>
+</ul></li>
+<li>一般化線形混合モデル（generalized linea mixed model; GLMM）
+<ul>
+<li>データのばらつきを二項分布とかポアソン分布で</li>
+<li>個体差を正規分布で</li>
+<li>部品として使う確率分布が複数になる</li>
+</ul></li>
+<li>ちなみに
+<ul>
+<li>これ以降に出てくる場所差・個体差は説明変数にはなり得ないもののことなので注意＝制御できないし観測できない</li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="例題glmでは説明できないカウントデータ" class="section level2">
+<h2>7.1 例題：GLMでは説明できないカウントデータ</h2>
+<ul>
+<li>基本情報
+<ul>
+<li>植物の各個体から8個の種子、そのうち生きてる数＝有限個数の2値データ＝二項分布</li>
+<li>葉っぱの数によって生存数がどう変わるか</li>
+<li>個体<span
+class="math inline">\(i\)</span>の種子が8個全部生きてたら<span
+class="math inline">\(y_i=8\)</span>, 全部死んでたら<span
+class="math inline">\(y_i=0\)</span></li>
+<li>葉数<span class="math inline">\(x_i\)</span>、<span
+class="math inline">\(x_i\)</span>の範囲が2–6で100個体集める</li>
+</ul></li>
+<li>GLMなら…
+<ul>
+<li>114ページの表で二項分布のリンク関数を確認する→ロジット関数</li>
+<li><span class="math inline">\(logit(q_i)=\beta_1+\beta_2x_i\)</span>
+<ul>
+<li>本にある <span class="math inline">\(p(y_i|\beta_1, \beta_2)= { 8
+\choose y_i }q^{y_i}_i(1-q_i)^{8-y_i}\)</span>
+は二項分布の確率分布関数→118ページ</li>
+<li>GLMがやるのは最尤推定（→25ページあたり）
+<ul>
+<li>尤度(=全ての<span
+class="math inline">\(i\)</span>についての確率の積）を最大にするパラメータの推定</li>
+<li>なので、全ての<span class="math inline">\(i\)</span>について<span
+class="math inline">\(p(y_i|\beta_1,
+\beta_2)\)</span>をかけるんだけど、それは扱いにくいので<span
+class="math inline">\(log\)</span>に入れて計算する（→<span
+class="math inline">\(\Sigma\)</span>log<span
+class="math inline">\(p(y_i|\beta_1, \beta_2)\)</span>; <span
+class="math inline">\(log\)</span>に入れたことで掛け算が足し算になってる）</li>
+</ul></li>
+<li>まあ、実際の計算はRのglm()に任せる</li>
+</ul></li>
+</ul></li>
+<li>ロジット関数のパラメータ<span
+class="math inline">\(q_i\)</span>(2値のうち1方となる確率)は?
+<ul>
+<li>やってみる</li>
+</ul></li>
+</ul>
+<pre class="r"><code>dat&lt;-read.csv(&#39;./kubobook_2012-2/glmm/data.csv&#39;)
+glm(cbind(y, N-y) ~ x, data=dat, family=binomial)</code></pre>
+<pre><code>## 
+## Call:  glm(formula = cbind(y, N - y) ~ x, family = binomial, data = dat)
+## 
+## Coefficients:
+## (Intercept)            x  
+##     -2.1487       0.5104  
+## 
+## Degrees of Freedom: 99 Total (i.e. Null);  98 Residual
+## Null Deviance:       607.4 
+## Residual Deviance: 513.8     AIC: 649.6</code></pre>
+<ul>
+<li>切片<span class="math inline">\(\hat{\beta_1}=-2.15\)</span>, <span
+class="math inline">\(x_i\)</span>の傾き<span
+class="math inline">\(\hat{\beta_2}=0.51\)</span>
+(ハットは推定値であることを示すために使っている記号→27ページ脚注)</li>
+<li>図の説明
+<ul>
+<li>図7.2: 葉数<span
+class="math inline">\(x_i\)</span>の関数としての生存種子数<span
+class="math inline">\(y_i\)</span>。データ点数が生存数。</li>
+<li>図7.3</li>
+<li>左:
+図7.2に最尤推定結果（実線）と真のパラメータからの推定結果（破線）のプロット。合ってないことが分かる。</li>
+<li>右:
+合ってないことの再確認。最尤推定されたモデルからの種子数予測（黒丸）と実データ（白丸）。合わない。</li>
+</ul></li>
+</ul>
+</div>
+<div id="過分散と個体差" class="section level2">
+<h2>7.2 過分散と個体差</h2>
+<ul>
+<li>7.1は二項分布で説明できそうな状況なのに合わない。どうやら推定値が誤っている誤っている。</li>
+<li>二項分布で期待(されるとりも大きな分散が含まれているデータ＝過分散(overdispersion)</li>
+</ul>
+<div id="過分散ばらつきが大きすぎる" class="section level3">
+<h3>7.2.1 過分散：ばらつきが大きすぎる</h3>
+<ul>
+<li>図7.3右の<span
+class="math inline">\(x_i=4\)</span>における予測値とデータのずれについてRで調べてみる
+<ul>
+<li>図示して、平均と分散を求める</li>
+</ul></li>
+</ul>
+<pre class="r"><code>d&lt;-read.csv(&#39;./kubobook_2012-2/glmm/data.csv&#39;)
+d4&lt;-d[d$x==4,]
+plot(table(d4$y),type=&#39;b&#39;)</code></pre>
+<p><img src="midori7_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+<pre class="r"><code>c(mean(d4$y), var(d4$y))</code></pre>
+<pre><code>## [1] 4.050000 8.365789</code></pre>
+<ul>
+<li>二項分布において<span
+class="math inline">\(y_i\)</span>の期待値は<span
+class="math inline">\(np\)</span>, 分散は<span
+class="math inline">\(np(1-p)\)</span>
+<ul>
+<li>今の例で<span
+class="math inline">\(x_i=4\)</span>のとき、生存確率<span
+class="math inline">\(p\)</span>は<span
+class="math inline">\(4.05/8\)</span>で0.5くらい</li>
+<li>分散は<span class="math inline">\(8 \times 0.5 \times
+(1-0.5)\)</span>で2くらいとなるはず。二項分布ならば。</li>
+<li>実際に計算した分散は0.84なので明らかに分散が大きい</li>
+<li>二項分布だと説明できないじゃん</li>
+</ul></li>
+</ul>
+</div>
+<div id="観測されていない個体差がもたらす過分散" class="section level3">
+<h3>7.2.2 観測されていない個体差がもたらす過分散</h3>
+<ul>
+<li>過分散になってしまう原因は1つには限らない
+<ul>
+<li>けど、よくあるのが観測されていない個体差（個人差）
+<ul>
+<li>図7.4: 極端な例。全生存と全非生存が半数ずつで平均4、分散（<span
+class="math inline">\(\frac{n\Sigma(x_i-\bar{x})}{n}\)</span>）16。二項分布で期待される分散2よりかなり大きい。</li>
+</ul></li>
+<li>「全個体は均質」という仮定で二項分布に従うなどと考えると失敗するよ、という話</li>
+</ul></li>
+</ul>
+</div>
+<div id="観測されていない個体差とは何か" class="section level3">
+<h3>7.2.3 観測されていない個体差とは何か?</h3>
+<ul>
+<li>個体差：データとしては定量化も識別もされていないけれど、各個体の何かに起因しているように見える差</li>
+<li>今回の例でいうなら可能性あることは2種類
+<ul>
+<li>生物的要因（遺伝子、経験）</li>
+<li>非生物的要因（栄養塩類量、水分や光などの環境）</li>
+<li>ほかにもあり得る。1鉢につき1植物だとすると、鉢の置き場所、土の状態などなど。ここではこれらの非生物要因を場所差・ブロック差と呼ぶ。</li>
+<li>鉢の効果をデータから推定できる?
+<ul>
+<li>1鉢に1植物の場合、鉢と植物個体は交絡してるので区別はできない。まとめたものが個体差。</li>
+<li>いずれにしろ、影響する要因全てを特定するのは不可能。個体差や場所差があるという前提で統計モデルを考える必要。</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="一般化線形混合モデル" class="section level2">
+<h2>7.3 一般化線形混合モデル</h2>
+<ul>
+<li>一般化線形混合モデル（generalized linear mixed model）
+<ul>
+<li>個体差や場所の効果をGLMに組み込むためのモデル</li>
+</ul></li>
+</ul>
+<div id="個体差をあらわずパラメータの追加" class="section level3">
+<h3>7.3.1 個体差をあらわずパラメータの追加</h3>
+<ul>
+<li>ある個体<span class="math inline">\(i\)</span>の生存確率<span
+class="math inline">\(q_i\)</span>の式に個体差をあらわすパラメータ<span
+class="math inline">\(r_i\)</span>を追加
+<ul>
+<li><span
+class="math inline">\(logit(q_i)=\beta_i+\beta_2x_1+r_i\)</span>
+<ul>
+<li><span class="math inline">\(r_i\)</span>は<span
+class="math inline">\(-\infty\)</span>から<span
+class="math inline">\(\infty\)</span>をとる連続値</li>
+<li>図7.5: <span
+class="math inline">\(r_i\)</span>の影響。正の値だと生存確率は大きく、負の値だと小さくなる</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="個体差のばらつきを表す確率分布" class="section level3">
+<h3>7.3.2 個体差のばらつきを表す確率分布</h3>
+<ul>
+<li>GLMMでは<span
+class="math inline">\(r_i\)</span>は何か確率分布に従っていると考える
+<ul>
+<li>しかもデータに基づいて、そのパラメータを推定できる</li>
+</ul></li>
+<li>他のパラメータ（<span class="math inline">\(\beta_1,
+\beta_2\)</span>）については確率分布に従うことを考えてるわけではない</li>
+<li>ここでは<span
+class="math inline">\(r_i\)</span>は平均0、標準偏差<span
+class="math inline">\(s\)</span>の正規分布に従うと仮定（ただし、正規分布とする根拠はない。観測してないから分からない。便利だから正規分布にするだけ）</li>
+<li>さらに各<span
+class="math inline">\(r_i\)</span>は独立と考える。これも単純化のため、なので便利になるように。</li>
+<li>これらの前提でいくと、<span
+class="math inline">\(r_i\)</span>の確率分布は以下のようにあらわせる
+<ul>
+<li><span class="math inline">\(p(r_i|s)=\frac{1}{\sqrt(2\pi
+s^2)}exp(-\frac{r_i^2}{2s^2})\)</span>
+<ul>
+<li>正規分布の確率分布関数そのまま。平均0と仮定しているので平均の項が消えてる（→135ページ）</li>
+<li>標準偏差<span class="math inline">\(s\)</span>は<span
+class="math inline">\(r_i\)</span>のばらつきに影響するので、<span
+class="math inline">\(s\)</span>によって集団の質が変わり、過分散の程度が変わることになる</li>
+</ul></li>
+</ul></li>
+<li>ここで図7.6の説明
+<ul>
+<li>一番上の図：標準偏差<span
+class="math inline">\(s\)</span>によって分布の広がりが変わる。これはOK。</li>
+<li>(A): <span class="math inline">\(s\)</span>が小さいと<span
+class="math inline">\(r_i\)</span>の分布は狭く、(B)<span
+class="math inline">\(s_i\)</span>が大きいと<span
+class="math inline">\(r_i\)</span>は広い。これもOK。</li>
+<li>このような<span
+class="math inline">\(r_i\)</span>（ここでは50個体分）から二項乱数を発生させる
+<ul>
+<li>ここを忘れていそう。→120ページあたり。</li>
+<li>二項分布のリンク関数はロジット関数（log<span
+class="math inline">\(\frac{q_i}{1-q_i}\)</span>）</li>
+<li>この確率<span
+class="math inline">\(q_i\)</span>はロジスティック関数（<span
+class="math inline">\(q_i=\frac{1}{1+exp(-線形予測子)}\)</span>）で求めることができる</li>
+<li>この図では、線形予測子の中のパラメータ<span
+class="math inline">\(\beta_1,
+\beta_2\)</span>を0とおいてるので、線形予測子は<span
+class="math inline">\(r_i\)</span>のみとなり、(A)や(B)のように標準偏差が異なる正規分布から生成した<span
+class="math inline">\(r_i\)</span>を使うことになる。</li>
+</ul></li>
+<li><span class="math inline">\(q_i\)</span>が決まると個体数<span
+class="math inline">\(y_i\)</span>も決まるので算出し、プロットしたのが一番下の図
+<ul>
+<li><span
+class="math inline">\(s\)</span>が小さいと二項分布に近くなるけど、大きいと全然違う分布になる</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="線形予測子の構成要素固定効果とランダム効果"
+class="section level3">
+<h3>7.3.3 線形予測子の構成要素：固定効果とランダム効果</h3>
+<ul>
+<li>GLMMの混合（mixed）とは何か
+<ul>
+<li>線形予測子はいくつかの項（説明変数）から構成される</li>
+<li>それらの構成要素は固定効果（fixed effects）ランダム効果（random
+effects）に分類</li>
+<li>2種類の項を持つので、そのようなGLMは混合モデル、混合効果モデルと呼ばれてきた</li>
+<li>リンク関数のないモデル（ばらつきは正規分布）の場合
+<ul>
+<li>固定効果：全体の平均を変える</li>
+<li>ランダム効果：全体の平均には影響しないけど、ばらつきを変える</li>
+</ul></li>
+<li>今回のモデル<span
+class="math inline">\(logit(q_i)=\beta_1+\beta_2x_1+r_i\)</span>では<span
+class="math inline">\(\beta_1\)</span>、<span
+class="math inline">\(\beta_2x1\)</span>は固定効果、<span
+class="math inline">\(r_i\)</span>はランダム効果
+<ul>
+<li><span
+class="math inline">\(r_i\)</span>は平均0としているから全体の平均には影響しない
+<ul>
+<li>平均0じゃなかったら?</li>
+<li>それは切片に入る?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>
