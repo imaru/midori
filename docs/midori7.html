@@ -11,7 +11,7 @@
     
     <title>midori7</title>
 
-        <script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
         <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
@@ -132,6 +132,15 @@
             <li><a href="#一般化線形混合モデルの最尤推定"
             id="toc-一般化線形混合モデルの最尤推定">7.4
             一般化線形混合モデルの最尤推定</a></li>
+            <li><a href="#現実のデータ解析にはglmmが必要"
+            id="toc-現実のデータ解析にはglmmが必要">7.5
+            現実のデータ解析にはGLMMが必要</a></li>
+            <li><a href="#いろいろな分布のglmm"
+            id="toc-いろいろな分布のglmm">7.6
+            いろいろな分布のGLMM</a></li>
+            <li><a href="#この章のまとめと参考文献"
+            id="toc-この章のまとめと参考文献">7.7
+            この章のまとめと参考文献</a></li>
             </ul></li>
             </ul>
           </div>
@@ -514,10 +523,85 @@ class="math inline">\(r_i\)</span>が入ってくると最尤推定できない
 <li>尤度<span class="math inline">\(L_i\)</span>を求めるときに<span
 class="math inline">\(r_i\)</span>を積分する
 <ul>
-<li>確率分布は積分すると1になる</li>
+<li>確率分布は積分すると1になるので<span
+class="math inline">\(r_i\)</span>は消える</li>
+<li>ただし、<span
+class="math inline">\(p(r_i|s)\)</span>で重みづけ（掛けてる）している</li>
 </ul></li>
+<li>図7.8
+<ul>
+<li><span
+class="math inline">\(r_i\)</span>に依存して変化する二項分布のパラメータ<span
+class="math inline">\(q_i\)</span>,それが確率<span
+class="math inline">\(p(r)\)</span>で起きるから重み付ける</li>
+<li>それらを足す</li>
+<li>出来上がった分布は過分散（平均0,
+分散1の正規分布を混ぜてるから）</li>
+</ul></li>
+<li>で、尤度は全個体分の積（<span
+class="math inline">\(L(\beta_1,\beta_2,s)=\prod_iL_i\)</span></li>
 </ul></li>
 </ul>
+<div id="rを使ってglmmのパラメーターを推定" class="section level3">
+<h3>7.4.1 Rを使ってGLMMのパラメーターを推定</h3>
+<ul>
+<li>glmmMLパッケージ
+<ul>
+<li>clusterオプションでランダム効果であることを指定</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(glmmML)
+glmmML(cbind(y, N-y)~x, data=d, family=binomial, cluster=id)</code></pre>
+<pre><code>## 
+## Call:  glmmML(formula = cbind(y, N - y) ~ x, family = binomial, data = d,      cluster = id) 
+## 
+## 
+##               coef se(coef)      z Pr(&gt;|z|)
+## (Intercept) -4.190   0.8777 -4.774 1.81e-06
+## x            1.005   0.2075  4.843 1.28e-06
+## 
+## Scale parameter in mixing distribution:  2.408 gaussian 
+## Std. Error:                              0.2202 
+## 
+##         LR p-value for H_0: sigma = 0:  2.136e-55 
+## 
+## Residual deviance: 269.4 on 97 degrees of freedom    AIC: 275.4</code></pre>
+<ul>
+<li>読み方
+<ul>
+<li>coeff: 最尤推定されたパラメーター。真の値-4と1に近い。</li>
+<li>Scale parameter: <span
+class="math inline">\(r_i\)</span>のばらつき＝<span
+class="math inline">\(s\)</span>の最尤推定値、Std.
+Errorは標準誤差。ばらつきは過小推定されている。本当は3。</li>
+<li>Residual devianceとAICは本とズレてる。なぜ？</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="現実のデータ解析にはglmmが必要" class="section level2">
+<h2>7.5 現実のデータ解析にはGLMMが必要</h2>
+<p>複数参加者からデータを取る状況だと基本GLMMだよね、という話。</p>
+<div id="反復疑似反復と統計モデルの関係" class="section level3">
+<h3>7.5.1 反復・疑似反復と統計モデルの関係</h3>
+<ul>
+<li>個体差・場所差が「見えるか」がポイント
+<ul>
+<li>反復：1個体1データのような取り方の場合、個体が同じか違うかの区別はない（「違う」しかない）ので、過分散にはならないし、モデルに個体差を入れる必要はない。というか入れられない。</li>
+<li>疑似反復：1個体から複数のデータを取り、複数個体からデータを取る。この場合、個体内の違いと個体間の違いを区別できる。これが疑似反復。モデルに個体差を入れることができるし、入れるべき。個体は反復（1個体から1データ）、場所は疑似反復（1つの鉢に複数個体）という場合もあり、そのときは場所差をモデルに入れるべき。個体も場所も疑似反復の場合、当然、どちらもモデルに入れる。</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="いろいろな分布のglmm" class="section level2">
+<h2>7.6 いろいろな分布のGLMM</h2>
+<ul>
+<li>ポアソン：過分散の場合、ポアソン分布と正規分布を混ぜる。glmmMLで最尤推定可能。ガンマ分布との無限混合分布である負の二項分布を仮定することもある。</li>
+<li>正規分布やガンマ分布：過分散は定義できない（平均と分散が独立なので）。ただし、疑似反復にデータを取ってるならGLMMを使うべき。lme4パッケージのglmer関数など。線形混合モデルとも呼ぶ。</li>
+</ul>
+</div>
+<div id="この章のまとめと参考文献" class="section level2">
+<h2>7.7 この章のまとめと参考文献</h2>
 </div>
 </div>
 </div>
