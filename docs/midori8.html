@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+        <meta name="author" content="Toshihide Imaruoka" />
+    
+    
+    <title>midori8</title>
+
+        <script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="mycss.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a
+            href="#章マルコフ連鎖モンテカルロmcmc法とベイズ統計モデル"
+            id="toc-章マルコフ連鎖モンテカルロmcmc法とベイズ統計モデル">8章:マルコフ連鎖モンテカルロ(MCMC)法とベイズ統計モデル</a>
+            <ul>
+            <li><a href="#例題-種子の生存確率個体差なし"
+            id="toc-例題-種子の生存確率個体差なし">8-1 例題:
+            種子の生存確率（個体差なし）</a></li>
+            <li><a href="#ふらふら試行錯誤による最尤推定"
+            id="toc-ふらふら試行錯誤による最尤推定">8-2
+            ふらふら試行錯誤による最尤推定</a></li>
+            <li><a href="#mcmcアルゴリズムのひとつメトリポリス法"
+            id="toc-mcmcアルゴリズムのひとつメトリポリス法">8.3
+            MCMCアルゴリズムのひとつ：メトリポリス法</a></li>
+            <li><a href="#mcmcサンプリングとベイズ統計モデル"
+            id="toc-mcmcサンプリングとベイズ統計モデル">8.4
+            MCMCサンプリングとベイズ統計モデル</a></li>
+            <li><a href="#補足説明" id="toc-補足説明">8.5
+            補足説明</a></li>
+            </ul></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">my public memo</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li>
+        <a href="index.html">Home</a>
+      </li>
+      <li>
+        <a href="midori1.html">緑本1部</a>
+      </li>
+      <li>
+        <a href="midori2.html">緑本2部</a>
+      </li>
+      <li>
+        <a href="midori3.html">緑本3部</a>
+      </li>
+      <li>
+        <a href="midori4.html">緑本4部</a>
+      </li>
+      <li>
+        <a href="midori5.html">緑本5部</a>
+      </li>
+      <li>
+        <a href="midori6.html">緑本6部 </a>
+      </li>
+      <li>
+        <a href="midori7.html">緑本7部 </a>
+      </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">midori8</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Toshihide
+Imaruoka
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2/27/2023</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="章マルコフ連鎖モンテカルロmcmc法とベイズ統計モデル"
+class="section level1">
+<h1>8章:マルコフ連鎖モンテカルロ(MCMC)法とベイズ統計モデル</h1>
+<ul>
+<li>7章ではGLMMの導入
+<ul>
+<li>7章は比較的単純なモデルだったので最尤推定法<a href="#fn1"
+class="footnote-ref"
+id="fnref1"><sup>1</sup></a>で解析的にパラメータを求めることができた</li>
+</ul></li>
+<li>ランダム効果項が増えるごとに、パラメータ推定が困難に
+<ul>
+<li>ランダム効果数分の多重積分</li>
+<li>簡単に言うと、無理になる</li>
+</ul></li>
+<li>そこで登場するのがMCMC。MCMCを使って最尤推定量を出す。
+<ul>
+<li>MCMCアルゴリズム
+<ul>
+<li>データに適用することで、推定結果がある確率分布からのランダムサンプルとして得られる-&gt;MCMCサンプル</li>
+<li>MCMCサンプルを得る手続き-&gt;MCMCサンプリング</li>
+</ul></li>
+</ul></li>
+<li>8章の構成
+<ul>
+<li>前半: 試行錯誤による最尤推定</li>
+<li>後半:
+試行錯誤による方法をMCMCに改良。また、MCMCサンプリングによる結果を使うための方法の1つとしてベイズ統計モデルを紹介。</li>
+</ul></li>
+</ul>
+<div id="例題-種子の生存確率個体差なし" class="section level2">
+<h2>8-1 例題: 種子の生存確率（個体差なし）</h2>
+<ul>
+<li>図8-1: 単純な例
+<ul>
+<li>ある個体<span
+class="math inline">\(i\)</span>から8個の種子を観察</li>
+<li>生存種子数をカウント</li>
+<li>2項分布に従うやつ</li>
+</ul></li>
+<li>20個体調べた
+<ul>
+<li><span
+class="math inline">\(\{y_1,y_2,...,y_{20}\}=\{4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4\}\)</span></li>
+<li>このとき、種子個体iの生存確率qは?
+<ul>
+<li>ある個体<span class="math inline">\(i\)</span>の生存種子数が<span
+class="math inline">\(y_i\)</span>である確率（ヒストグラム（図8.1右）を見ると過分散ではないので、二項分布に従うと考える（＝統計モデル）</li>
+<li>ただしパラメータqは不明なので、データからそれを求める
+<ul>
+<li>統計モデル: <span
+class="math inline">\(p(y_i|q)=\binom{8}{y_i}q^{y_1}(1-q)^{8-{y_1}}\)</span></li>
+<li>尤度関数：<span class="math inline">\(L(q)=p(\mathbf{Y}|q)=\prod_i
+p(y_i|q)\)</span>（パラメータqのときデータ<span
+class="math inline">\(y_i\)</span>が得られる確率の総乗）
+<ul>
+<li>ここで本で<strong><em>Y</em></strong>（この資料ではイタリックになってないけど）と表されているのは応答変数yの集合という意味（P11）。パラメータqのときに<span
+class="math inline">\(y_1\)</span>になる確率それぞれ、という意味になるので、その相乗となる。</li>
+</ul></li>
+<li>qが変化すると尤度（モデルのもっともらしさ）が変化する。→尤度が最大になるqを求めればいい。これが真の値の推定値（頻度主義だから真の値がある）<span
+class="math inline">\(\hat{q}\)</span>（qハット）=最尤推定量</li>
+<li>対数尤度関数：<span class="math inline">\(logL(q) =
+\Sigma_i\{y_ilog\ q+(8-y_i)\ log(1-q)\}+定数\)</span>（図8.2）</li>
+</ul></li>
+</ul></li>
+<li>このとき、<span
+class="math inline">\(logL(q)\)</span>を最大にするqの値は、傾き（<span
+class="math inline">\(\frac{dLogL(q)}{dq}\)</span>）が0となるところ</li>
+<li>そこで、対数尤度関数の右辺をqで偏微分する
+<ul>
+<li>まずシグマを分割する（<a
+href="https://hazm.at/mox/math/statistics/inferential/binomial-distribution.html">参考ページ</a>
+<ul>
+<li>対数尤度関数=<span class="math inline">\(\Sigma_iy_ilog\ q+(8\times
+20-\Sigma_iy_i)log(1-q)+定数\)</span>
+突然出てくる20は20個体観察する例題だから<span
+class="math inline">\(\Sigma_q^{20}8\)</span>ということ</li>
+</ul></li>
+<li>qで微分する
+<ul>
+<li><span class="math inline">\(log\ q\)</span>は<span
+class="math inline">\(\frac{1}{q}\)</span>になる</li>
+<li><span class="math inline">\(log(1-q)\)</span>は<span
+class="math inline">\(-\frac{1}{1-q}\)</span>になる</li>
+<li><span class="math inline">\(\frac{\partial}{\partial
+q}logL(q)=\frac{\Sigma_iy_i}{q}-\frac{8\times
+20-\Sigma_iy_i}{1-q}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\frac{\partial}{\partial
+q}logL(q)\)</span>が0になるqを知りたいので、
+<ul>
+<li><span class="math inline">\(\frac{\Sigma_iy_i}{q}-\frac{8\times
+20-\Sigma_iy_i}{1-q}=0\)</span></li>
+<li><span class="math inline">\(\frac{\Sigma_iy_i}{q}\)</span> = <span
+class="math inline">\(\frac{8\times 20-\Sigma_iy_i}{1-q}\)</span></li>
+<li><span class="math inline">\(\Sigma_i
+y_i-q\Sigma_iy_i=8\times20\times q-q\Sigma_iy_i\)</span></li>
+<li><span
+class="math inline">\(q=\frac{\Sigma_iy_i}{8\times20}\)</span></li>
+<li><span class="math inline">\(q=0.45625\)</span></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>以上が<strong>解析的</strong>な最尤推定</li>
+</ul>
+</div>
+<div id="ふらふら試行錯誤による最尤推定" class="section level2">
+<h2>8-2 ふらふら試行錯誤による最尤推定</h2>
+<ul>
+<li>8-1のように解析的な方法でパラメータを求められないとしたらどうするか</li>
+<li>試行錯誤的に<span
+class="math inline">\(q\)</span>を変化させ、対数尤度が高くなる最尤推定地<span
+class="math inline">\(\hat{q}\)</span>を求める</li>
+<li>効率も精度も悪いけど、理解しやすい手順
+<ul>
+<li><span class="math inline">\(q\)</span>を離散化→<span
+class="math inline">\(q\)</span>を連続値ではなく<span
+class="math inline">\(0.01\)</span>刻みの離散値と考える</li>
+<li>適当な<span
+class="math inline">\(q\)</span>の初期値を決め、対数尤度を計算して評価。対数尤度関数に代入するだけ。パラメータは<span
+class="math inline">\(q\)</span>だけだから計算可能。<span
+class="math inline">\(q=0.30\)</span>の場合、<span
+class="math inline">\(-46.38\)</span>になる。</li>
+<li>以下は「ふらふら試行錯誤の最尤推定」ルール
+<ol style="list-style-type: decimal">
+<li><span
+class="math inline">\(q\)</span>はとなりの値にしか変化できない（ここで「となりの値」という考え方をするために、<span
+class="math inline">\(q\)</span>を離散化したのだと思う）-&gt;0.30スタートなら0.29か0.31</li>
+<li>2つの値のうちどちらを選ぶかはランダムに決定する</li>
+<li>新しい対数尤度が現在よりも大きければそちらに移動</li>
+</ol>
+<ul>
+<li>0.31が選ばれた場合、対数尤度は-45.24となり、大きいから採用される
+-&gt; <span class="math inline">\(q\)</span>は0.31になる</li>
+<li>仮に0.29が選ばれていれば、対数尤度は-47.62で小さくなってるので、<span
+class="math inline">\(q\)</span>は0.30に戻る</li>
+</ul></li>
+<li>下は適当に実装してみた例。初期値を変えても同じ値に収束するのがわかる。
+<ul>
+<li><strong>このアルゴリズムは次のメトロポリス法の基になるので、作ってみると良いです</strong></li>
+<li>本では<span
+class="math inline">\(q\)</span>を0.01刻みで動かしてるけど、下では0.001刻みにしている。緑本の例のように100回では収束せず600回くらいかかってるけど、当然収束した値は、より真の値に近づく。</li>
+</ul></li>
+</ul></li>
+</ul>
+<pre class="r"><code>nrp&lt;-1000 # 繰り返し数
+qi&lt;-0.159 # qの初期値
+n&lt;-8 # 観測種子数
+data&lt;-matrix(c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4)) # 観測された生存種子数（＝データ）
+logL&lt;-numeric(nrp) # 行列logL初期化
+q&lt;-qi # 行列qの1つめに初期値を代入
+
+# 以下繰り返し。値を更新しながら繰り返すのでapply系関数は使えないと思う
+for (rp in 1:nrp){ 
+  # q[rp]を用いて対数尤度の算出
+  # 観測されたデータごとに二項分布を使って条件つき確率を計算。apply関数を使うことで繰り返し文を使わないようにしている
+  lh&lt;-apply(data,2,function(x){
+    lhd&lt;-choose(n,x)*q[rp]^x*(1-q[rp])^(n-x)
+    return(lhd)
+  })
+  logL[rp]&lt;-log(prod(lh)) # 確率の総乗が尤度、その対数をとって対数尤度
+
+  # 繰り返しの2回目以降はqを変化させたときに対数尤度が高くなっていた場合のみ、そのqを採用
+  if (rp&gt;1){
+    if (logL[rp]&lt;logL[rp-1]){
+      q[rp]&lt;-q[rp-1]
+      logL[rp]&lt;-logL[rp-1]
+    }
+  }
+  # 次のqはランダムに正負どちらかの隣を選ぶ
+  if (round(runif(1))){ 
+    q[rp+1]&lt;-q[rp]+0.001
+  }else{
+    q[rp+1]&lt;-q[rp]-0.001
+  }
+}
+plot(q[1:nrp],type=&#39;l&#39;, main=q[nrp]) # 結果をグラフに</code></pre>
+<p><img src="midori8_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
+</div>
+<div id="mcmcアルゴリズムのひとつメトリポリス法" class="section level2">
+<h2>8.3 MCMCアルゴリズムのひとつ：メトリポリス法</h2>
+<ul>
+<li>もっとも簡単なMCMCアルゴリズム</li>
+<li>8.2でやった「ふらふら推定」アルゴリズムに1つのルールを追加
+<ol style="list-style-type: decimal">
+<li>qはとなりの値にしか変化できない（ここで「となりの値」という考え方をするために、qを離散化したのだと思う）-&gt;0.30スタートなら0.29か0.31</li>
+<li>2つの値のうちどちらを選ぶかはランダムに決定する</li>
+<li>対数尤度が現在よりも大きければそちらに移動</li>
+<li>【新】新しいqで算出した尤度が小さくなってても、確率rでそれを採用
+<ul>
+<li><span
+class="math inline">\(r=\frac{L(q^新)}{L(q^)}\)</span>とする</li>
+</ul></li>
+</ol>
+<ul>
+<li>本に書いてる例
+<ul>
+<li>q=30のとき、q=0.29が選ばれた場合
+<ul>
+<li>対数尤度は-46.38から-47.72に下がる</li>
+<li>新しいアルゴリズムでは尤度比(<span
+class="math inline">\(exp(-47.62+46.38)=0.29\)</span>)の確率で新しい値を採用（-47.62などの数値は対数尤度なのでexpで元に戻す）
+<ul>
+<li>「ふらふら」では採用確率0</li>
+<li>尤度比が小さいと採用しにくいんだけど、0ではないという違い</li>
+</ul></li>
+</ul></li>
+<li>この、前の状態に基づいて新しい値を作るのが<strong>マルコフ連鎖</strong></li>
+<li>乱数を利用した計算アルゴリズムが<strong>モンテカルロ法</strong>,
+手順2と4で乱数を使ってるから、これはモンテカルロ法</li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="メトロポリス法でサンプリングしてみる" class="section level3">
+<h3>8.3.1 メトロポリス法でサンプリングしてみる</h3>
+<ul>
+<li>やってみる</li>
+<li>まずは10回分の変化（図8.6）</li>
+<li>次に100回分（図8.7）、図8.8では最大10万回分</li>
+<li>図8.8
+<ul>
+<li>左：ステップごとのqの変化</li>
+<li>右ヒストグラム：qのヒストグラム</li>
+<li>右直線：マルコフ連鎖の定常分布</li>
+</ul></li>
+<li>「ふらふら」とメトロポリス法の違い
+<ul>
+<li>メトロポリス法は最大対数尤度に達するまでに時間がかかり、達した後も変化する
+<ul>
+<li>「どこか一番いい値」に到達しない</li>
+</ul></li>
+</ul></li>
+<li>MCMCの目的は値の探索ではなく、<strong>パラメータ値の生成</strong>＝サンプリング</li>
+<li>8.8に示されるように、ステップ数が十分増えると、ある確率分布に似てくる。この確率分布がマルコフ連鎖の<strong>定常分布</strong></li>
+</ul>
+<pre class="r"><code>layout(matrix(1:4, ncol=2, nrow=2))
+nrp&lt;-10 # 繰り返し数。ここと次の行の初期値を変えて色々試してみることになる。
+qi&lt;-0.30
+n&lt;-8
+data&lt;-matrix(c(4,3,4,5,5,2,3,1,4,0,1,5,5,6,5,4,4,5,3,4))
+logL&lt;-numeric(nrp) # 行列logL初期化
+q&lt;-qi
+lr&lt;-1
+for (rp in 1:nrp){
+  # q[rp]を用いて対数尤度の算出
+  lh&lt;-apply(data,2,function(x){
+    lhd&lt;-choose(n,x)*q[rp]^x*(1-q[rp])^(n-x)
+    return(lhd)
+  })
+  logL[rp]&lt;-log(prod(lh))
+  # 対数尤度の比較。ここだけ新しくなってる
+  if (rp&gt;1){
+    lr&lt;-exp(logL[rp]-logL[rp-1]) # 尤度比
+    if (runif(1)&gt;lr){ # 尤度比の確率で新しいqを採用(尤度比lrを閾値とし、0-1範囲の乱数がそれを超えなかったら採用しない)
+      q[rp]&lt;-q[rp-1]
+      logL[rp]&lt;-logL[rp-1]
+    }
+  }
+  # qの増減をランダムに決定
+  if (round(runif(1))){
+    q[rp+1]&lt;-min(0.99,q[rp]+0.01)
+  }else{
+    q[rp+1]&lt;-max(0.01,q[rp]-0.01)
+  }
+}
+print(q)</code></pre>
+<pre><code>##  [1] 0.30 0.29 0.29 0.28 0.29 0.29 0.28 0.29 0.30 0.31 0.30</code></pre>
+<pre class="r"><code>plot(q[1:length(q)-1],logL)
+plot(q[1:nrp],type=&#39;l&#39;, main=mean(q))
+hist(q)</code></pre>
+<p><img src="midori8_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+</div>
+<div id="マルコフ連鎖の定常分布" class="section level3">
+<h3>8.3.2 マルコフ連鎖の定常分布</h3>
+<ul>
+<li>定常分布：ある変数qのマルコフ連鎖が一定の条件<a href="#fn2"
+class="footnote-ref"
+id="fnref2"><sup>2</sup></a>を満たすとき、発生するqが従う確率分布
+<ul>
+<li>「一定の条件」は補足でちょっと出てくる。詳しくは脚注の本。</li>
+<li>ここでは、メトロポリス法によるマルコフ連鎖は条件を満たしていると考える</li>
+</ul></li>
+<li>ステップ数が小さいと定常分布と全然違う</li>
+<li>ステップ数を増やすと定常分布に近づく</li>
+<li>なぜ？
+<ul>
+<li>qの初期値が適当</li>
+<li>qがちょっとずつしか変化しない</li>
+</ul></li>
+<li>ただし、どういうqから始めてもそのうち定常分布に従うようになりそう（図8.9）
+<ul>
+<li>十分な数のステップ（MCMCサンプリング）が必要</li>
+<li>図8.8でみると1000では不十分
+<ul>
+<li>qが前のqと相関</li>
+</ul></li>
+<li>今回の場合10万ステップ必要</li>
+</ul></li>
+<li>いろいろな工夫がされている
+<ul>
+<li>ステップ間でのサンプルの相関を下げる</li>
+<li>このあたりは次章以降でも検討と書いているけど、実際にはStanの設定などでやるところと思われる</li>
+</ul></li>
+</ul>
+</div>
+<div id="この定常分布は何をあらわす分布なのか" class="section level3">
+<h3>8.3.3 この定常分布は何をあらわす分布なのか？</h3>
+<ul>
+<li>定常分布<span class="math inline">\(p(q|\mathbf{Y})\)</span>
+<ul>
+<li>尤度<span class="math inline">\(L(q)\)</span>に比例する確率分布
+<ul>
+<li><span
+class="math inline">\(p(q|\mathbf{Y})=\frac{L(q)}{\Sigma_qL(q)}\)</span>
+<ul>
+<li>突然出てくる感じがする。定義だから仕方ない？
+<ul>
+<li>分子：あるパラメータqのときの尤度</li>
+<li>分母：尤度の総和</li>
+<li>この比がデータ<strong><em>Y</em></strong>という条件のもとで、パラメータがqであるという確率分布、という意味。尤度に従って確率が変化する、と考えるとまあ納得できる感じもする。</li>
+</ul></li>
+<li>分母は全てのL(q)の和, データ<span
+class="math inline">\(\mathbf{Y}\)</span>にだけ依存する定数なので、</li>
+</ul></li>
+<li><span class="math inline">\(p(q|\mathbf{Y})\propto L(q)\)</span>
+と表せる</li>
+</ul></li>
+<li>メトリポリス法で得られた十分に長いMCMCサンプルは、定常分布<span
+class="math inline">\(p(q|\mathbf{Y})\)</span>からのランダムサンプル</li>
+</ul></li>
+<li>ここまでのまとめ
+<ul>
+<li>観測データ<span
+class="math inline">\(\mathbf{Y}\)</span>を説明するために統計モデルを作成（二項分布を使用）</li>
+<li>モデルとメトロポリス法を使ってMCMCサンプリングをすることで、尤度に比例するqの確率分布<span
+class="math inline">\(p(q|\mathbf{Y})\)</span>を推定できるサンプルを入手
+<ul>
+<li><span class="math inline">\(p(q|\mathbf{Y})\)</span>は<span
+class="math inline">\(L(q)\)</span>に比例するので、データに統計モデルを当てはめたときのqの値の確率分布と言える</li>
+<li>つまり、MCMCサンプリングは統計モデルのあてはめ</li>
+</ul></li>
+<li>MCMCサンプルの統計量を示すことも可能</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="mcmcサンプリングとベイズ統計モデル" class="section level2">
+<h2>8.4 MCMCサンプリングとベイズ統計モデル</h2>
+<ul>
+<li>MCMCサンプリング：モデルをデータに当てはめる方法の1つ
+<ul>
+<li>結果としてパラメータの確率分布が得られる</li>
+</ul></li>
+<li><strong>ただし</strong>
+<ul>
+<li>「パラメータの確率分布」という言葉は頻度主義の考え方では使えない
+<ul>
+<li>頻度主義ではパラメータには真の値があるから。最尤推定法ではその値を推定していた。</li>
+<li>頻度主義ではパラメータは確率変数ではない</li>
+</ul></li>
+</ul></li>
+<li>パラメータを確率分布として扱う考え方はないのか？
+<ul>
+<li>ある。ベイズ統計学。</li>
+<li>ベイズ統計学の統計モデルでは、パラメータは確率分布として表現される</li>
+</ul></li>
+<li>ということで、考え方をがらっと変えて、今使ってる例題をベイズ統計学で考えてみる
+<ul>
+<li>ベイズ統計＝ベイズの公式の形式で推論を行う</li>
+<li>ベイズの公式：条件つき確率の性質を記述する等式（8.5.2で）</li>
+<li>種子の例
+<ul>
+<li><span
+class="math inline">\(p(q|\mathbf{Y})=\frac{p(\mathbf{Y}|q)p(q)}{\Sigma_qp(\mathbf{Y}|q)p(q)}\)</span></li>
+<li>左辺：データ<span
+class="math inline">\(\mathbf{Y}\)</span>が得られたとき、<span
+class="math inline">\(q\)</span>が従う確率分布（ベイズでは事後分布）MCMCで得た事後分布に相当</li>
+<li>右辺の分子
+<ul>
+<li>最初の項<span
+class="math inline">\(p(\mathbf{Y})|q)\)</span>：qが決まっているときに<span
+class="math inline">\(\mathbf{Y}\)</span>が得られる確率。今の例では尤度<span
+class="math inline">\(L(q)\)</span>。なぜなら、尤度<span
+class="math inline">\(L(q)\)</span>は、色々なqのときに各データが得られる条件つき確率の相乗だから。</li>
+<li>次の項<span class="math inline">\(p(q)\)</span>：データ<span
+class="math inline">\(\mathbf{Y}\)</span>がないときの<span
+class="math inline">\(q\)</span>の確率分布（ベイズでは事前分布,prior）。条件つきではないqの確率分布。そんなものあるの？と思うのが普通。</li>
+</ul></li>
+<li>右辺の分母
+<ul>
+<li>規格化のための定数？：確率の積である右辺の分子の和なので、右辺の計算結果を全部足すと1になることになる。つまり、左辺確率分布の和を1にできる。それが規格化のための定数という意味。</li>
+<li>また、<span
+class="math inline">\(p(\mathbf{Y}|q)\)</span>が「あるqで<span
+class="math inline">\(\mathbf{Y}\)</span>となる確率」ということは、「それと<span
+class="math inline">\(p(q)\)</span>つまり<span
+class="math inline">\(q\)</span>がその値を取る確率の積」の和は<span
+class="math inline">\(p(\mathbf{Y})\)</span>（あるデータ<span
+class="math inline">\(\mathbf{Y}\)</span>が得られる確率。qに関しては足し合わせちゃってるからqとは関係ない定数。</li>
+<li>つまり分母は<span
+class="math inline">\(q\)</span>に関係のない定数</li>
+</ul></li>
+</ul></li>
+<li>これで<span class="math inline">\(事後分布=\frac{尤度\times
+事前分布}{データが得られる確率}\propto尤度\times事前分布\)</span>が出てくる</li>
+</ul></li>
+<li>8.3.3では定常分布<span
+class="math inline">\(p(q|\mathbf{Y})\)</span>は<span
+class="math inline">\(\frac{L(q)}{\Sigma(L(q))}\)</span>であることを示した
+<ul>
+<li>右辺の分母は定数だったので、<strong>定常分布は尤度に比例する</strong></li>
+</ul></li>
+<li>ベイズの公式から今導いたのも似てて、<strong>事後分布は尤度と事前分布の積に比例する</strong>
+<ul>
+<li>事前分布<span
+class="math inline">\(p(q)\)</span>が一定だったりすると、8.3.3の話とぴったり</li>
+</ul></li>
+<li>実際には尤度や事前分布はきっちり指定する</li>
+</ul>
+</div>
+<div id="補足説明" class="section level2">
+<h2>8.5 補足説明</h2>
+<div id="メトロポリス法と定常分布の関係" class="section level3">
+<h3>8.5.1 メトロポリス法と定常分布の関係</h3>
+<ul>
+<li>なぜメトロポリス法に従うことで、定常分布からのランダムサンプリングになるのか</li>
+<li>定常分布からのサンプリングとなる条件
+<ol style="list-style-type: decimal">
+<li>qが任意の初期値から定常分布<span
+class="math inline">\(p(q|\mathbf{Y})\)</span>に収束する</li>
+<li>あるqが<span
+class="math inline">\(p(q|\mathbf{Y})\)</span>に従っていて、メトロポリス法で得た<span
+class="math inline">\(q^新\)</span>も<span
+class="math inline">\(p(q|\mathbf{Y})\)</span>に従っている</li>
+</ol></li>
+<li>以下で2について検討
+<ul>
+<li>新しい<span
+class="math inline">\(q^新\)</span>で尤度がよくなる変化と悪くなる変化に分けて考える
+<ul>
+<li><span class="math inline">\(q^新\)</span>で尤度が改善される場合
+<ul>
+<li><span class="math inline">\(q\)</span>から<span
+class="math inline">\(q^新\)</span>になる確率<span
+class="math inline">\(p(q-&gt;q^新=0.5\times1\)</span>：最初の0.5はその<span
+class="math inline">\(q^新\)</span>になる確率(1/2)、この場合尤度は改善しているので新になるのは1、だから<span
+class="math inline">\(0.5\times1\)</span></li>
+<li>逆にある<span class="math inline">\(q^新\)</span>から<span
+class="math inline">\(q\)</span>になる確率<span
+class="math inline">\(p(q^新-&gt;q)=0.5\times\frac{L(q)}{L(q^新)}\)</span>：この変化では尤度は悪くなってるはずなので、0.5に尤度比をかける</li>
+</ul></li>
+<li>2つの式から次の式が成り立つ：<span
+class="math inline">\(L(q^新)p(q^新-&gt;q)=L(q)p(q-&gt;q^新)\)</span></li>
+<li>定常分布<span class="math inline">\(p(q|\mathbf{Y})\)</span>は<span
+class="math inline">\(\frac{L(q)}{\Sigma
+L(q)}\)</span>と表せ、分母は定数なので、1つ前の式は<span
+class="math inline">\(p(q^新|\mathbf{Y})p(q^新-&gt;q)=p(q|\mathbf{Y})p(q-&gt;q^新)\)</span>と書ける</li>
+</ul></li>
+<li><span class="math inline">\(q^新\)</span>で尤度が悪くなる場合
+<ul>
+<li><span
+class="math inline">\(p(q-&gt;q^新)=0.5\times\frac{L(q)}{L(q^新)}\)</span></li>
+<li><span class="math inline">\(p(q^新-&gt;q)=0.5\times1\)</span></li>
+<li>結局同じ式は<span
+class="math inline">\(p(q^新|\mathbf{Y})p(q^新-&gt;q)=p(q|\mathbf{Y})p(q-&gt;q^新)\)</span>が成立</li>
+<li><strong>詳細釣り合いの条件</strong></li>
+</ul></li>
+<li>両辺に関して、qについての和を取る
+<ul>
+<li><span class="math inline">\(\Sigma_q
+p(q^新|\mathbf{Y})p(q^新-&gt;q)=\Sigma_qp(q|\mathbf{Y})p(q-&gt;q^新)\)</span>
+<ul>
+<li>左辺の<span
+class="math inline">\(p(q^新|\mathbf{Y})\)</span>はqについての和とは無関係<em>ここ理解できない</em></li>
+<li><span
+class="math inline">\(\Sigma_qp(q^新-&gt;q)=1\)</span><em>これはわかる</em></li>
+<li>右辺はqが定常分布に従ってるときに<span
+class="math inline">\(q\)</span>が<span
+class="math inline">\(q^新\)</span>になる確率
+<em>これもわからない</em></li>
+<li><strong>ということで、ここは理解できていない</strong></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="ベイズの定理" class="section level3">
+<h3>8.5.2 ベイズの定理</h3>
+<ul>
+<li>ベイズの定理：<span
+class="math inline">\(p(q|\mathbf{Y})=\frac{p(\mathbf{Y}|q)p(q)}{\Sigma_qp(\mathbf{Y}|q)p(q)}\)</span>
+データ<span
+class="math inline">\(\mathbf{Y}\)</span>が得られたときにパラメータ<span
+class="math inline">\(q\)</span>である確率は、パラメータ<span
+class="math inline">\(q\)</span>であるときにデータ<span
+class="math inline">\(\mathbf{Y}\)</span>が得られる確率とパラメータが<span
+class="math inline">\(q\)</span>である確率の積(ここまで分子)を分子を全て足し合わせたもので割った値に等しい
+<ul>
+<li>これは条件つき確率と同時確率の関係（<span
+class="math inline">\(p(A|B)p(B)=p(A,B)\)</span>：Bが起きたときにAが起きる確率とBが起きる確率の積はAとBが同時に起きる確率に等しい）を整理したもの</li>
+</ul></li>
+<li>例題で考えてみる
+<ul>
+<li>qは離散化されていて、0.01から0.99のような値を取る</li>
+<li><span
+class="math inline">\(\mathbf{Y}\)</span>はデータなので値は決まっている</li>
+<li>条件つき確率と同時確率の定義から、あるデータYのときにパラメータqがある値を取る確率は
+<ul>
+<li><span class="math inline">\(p(q|Y)p(q)=p(Y,q)\)</span></li>
+<li><span class="math inline">\(p(q|Y)=\frac{p(Y,q)}{p(Y)}\)</span>
+<ul>
+<li><span class="math inline">\(p(Y,q)\)</span>は<span
+class="math inline">\(p(Y|q)p(q)\)</span>とも書けるので、</li>
+<li><span
+class="math inline">\(p(q|Y)=\frac{p(Y|q)p(q)}{p(Y)}\)</span>とベイズの公式が出てくる
+<ul>
+<li>P(Y|q)p(q)とP(q|Y)p(Y)は同じ</li>
+</ul></li>
+<li>分母を書き換えると最初の式（同時確率をqについて足してる）。</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li
+id="fn1"><p>尤度関数を最大化させるパラメータを最尤推定量とする方法。最尤推定すること一般を指すわけではない。伊丸岡は割と今まで誤解していた（モデルが複雑になると最尤推定できないと思っていただけど、そうではない）。と、思ったけど、最尤推定するためん方法一般を最尤推定法と呼んでいる例もある（緑本P170の下から7行目「（効率のよくない）試行錯誤による最尤推定法を紹介する」もそう。<a
+href="https://ja.wikipedia.org/wiki/最尤推定">Wikipediaの最尤推定</a>もそうかもしれない（最尤推定という項目だから当たり前かもしれないけど）。ただ、そうはない例もあって例えば<a
+href="https://norimune.net/708">ここ</a>。最尤推定法は「真値が1つだけど、データはいろいろな理由で変化する、という頻度論による発想」に基づくと言っていて、ここにはMCMCを使った方法は入らないのは明らか。また、緑本のP185の説明でも「最尤推定法によるパラメーター推定は、統計学のわくぐみのひとつである頻度主義を前提にしているといえます」とあるので、P170の書き方が例外なのかも。<a
+href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>ある条件の<a
+href="https://www.amazon.co.jp/dp/400730789X">文献</a><a href="#fnref2"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>
