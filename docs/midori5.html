@@ -10,7 +10,7 @@
     
     <title>midori5</title>
 
-        <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+        <script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
         <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
@@ -191,6 +191,9 @@
       </li>
       <li>
         <a href="midori7.html">緑本7部 </a>
+      </li>
+      <li>
+        <a href="midori8.html">緑本8部 </a>
       </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -399,12 +402,12 @@ D12&lt;-pb(dat, n.bs=nr)
 
 summary(D12)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0000  0.1028  0.4496  0.9895  1.2905 18.1016</code></pre>
+##  0.0000  0.1032  0.4550  1.0203  1.3161 14.3390</code></pre>
 <pre class="r"><code>hist(D12)
 abline(v=d1, lty=2)</code></pre>
 <p><img src="midori5_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
 <pre class="r"><code>sum(D12&gt;d1)/nr</code></pre>
-<pre><code>## [1] 0.0323</code></pre>
+<pre><code>## [1] 0.0364</code></pre>
 </div>
 </div>
 <div id="方法2-chi2分布を使った近似計算法" class="section level2">
